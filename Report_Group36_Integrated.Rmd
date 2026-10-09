@@ -2,6 +2,10 @@
 title: "Responsibility and verification of AI-generated code in online discussions"
 subtitle: "An exploratory study of five selected Hacker News discussions"
 author: "Group 36"
+student id:
+  - "Dinh Trung Le - 22084424"
+  - "Huynh Thanh Bach Phan - 22166214"
+  - "Minh Duc Tran - 22084844"
 date: "9 October 2026"
 output:
   pdf_document:
