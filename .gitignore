@@ -1,0 +1,15 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Renviron
+renv/library/
+renv/staging/
+*_cache/
+*_files/
+*.log
+*.aux
+*.out
+*.toc
+*.tex
+outputs/analysis_results.rds
+data/new_downloads/

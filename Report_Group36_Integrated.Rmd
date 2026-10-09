@@ -1,0 +1,473 @@
+---
+title: "Responsibility and verification of AI-generated code in online discussions"
+subtitle: "An exploratory study of five selected Hacker News discussions"
+author: "Group 36"
+date: "9 October 2026"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: true
+    toc: false
+    keep_tex: false
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: kable
+fontsize: 10pt
+geometry: margin=0.75in
+bibliography: references.bib
+link-citations: true
+header-includes:
+  - \usepackage{float}
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+params:
+  final_mode: false
+  group_review_confirmed: false
+  members: "Group 36 - enter all names and student IDs"
+  repository_url: ""
+  collection_note: "The original collection date, search/selection procedure and R collection script have not yet been supplied. The analysis uses the supplied frozen CSV files; supplementary collection code does not establish their historical provenance."
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = TRUE,
+  fig.width = 7.1, fig.height = 4.2, fig.align = "center", fig.pos = "H",
+  dpi = 160, out.width = "100%", cache = FALSE)
+options(width = 85)
+here::i_am("Report_Group36_Integrated.Rmd")
+project_root <- here::here()
+needed <- c("knitr", "cluster", "igraph")
+missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing)) stop("Run install_packages.R first. Missing: ", paste(missing, collapse = ", "))
+for (script in c("00_data.R", "02_text_cluster.R", "03_hypothesis.R", "04_network.R", "05_export.R")) {
+  source(here::here("R", script), encoding = "UTF-8")
+}
+raw_path <- here::here("data", "raw", "hn_comments_raw.csv")
+clean_path <- here::here("data", "processed", "hn_comments_clean.csv")
+raw <- read_comments(raw_path)
+comments <- read_comments(clean_path, clean = TRUE)
+audit <- audit_comments(raw, comments)
+text_result <- analyse_text(comments)
+rq2 <- analyse_hypothesis(comments,
+  here::here("data", "annotations", "verification_labels.csv"), clean_path)
+clusters <- analyse_clusters(comments, text_result)
+clusters$sensitivity <- cluster_linkage_sensitivity(clusters)
+network <- analyse_network(comments, seed = 3020)
+bridge <- analyse_cluster_replies(comments, clusters$assignments)
+results <- list(audit = audit, text = text_result, rq2 = rq2, clusters = clusters,
+                network = network, bridge = bridge)
+export_results(results, project_root)
+save_project_figures(results, project_root)
+net_value <- function(name) network$summary$value[match(name, network$summary$metric)]
+short_text <- function(x, n = 150L) {
+  x <- gsub("[\r\n]+", " ", as.character(x))
+  ifelse(nchar(x) > n, paste0(substr(x, 1L, n), "..."), x)
+}
+show_table <- function(x, caption = NULL, digits = 3) {
+  knitr::kable(x, format = "pipe", caption = caption, digits = digits, row.names = FALSE)
+}
+manifest <- read.csv(here::here("data", "collection_manifest.csv"),
+  colClasses = "character", stringsAsFactors = FALSE, na.strings = c("", "NA"))
+manifest_fields <- c("original_collection_utc", "original_selection_reason", "original_collection_R_script")
+manifest_complete <- all(manifest_fields %in% names(manifest)) &&
+  all(!is.na(as.matrix(manifest[, manifest_fields, drop = FALSE]))) &&
+  all(nzchar(trimws(as.matrix(manifest[, manifest_fields, drop = FALSE]))))
+blockers <- character()
+if (!rq2$row_labels_available) blockers <- c(blockers, "RQ2 comment-level labels are missing")
+if (!manifest_complete) blockers <- c(blockers, "original collection provenance is incomplete")
+if (grepl("have not yet been supplied", params$collection_note, fixed = TRUE)) {
+  blockers <- c(blockers, "collection_note still contains the default missing-provenance wording")
+}
+if (!nzchar(params$repository_url)) blockers <- c(blockers, "repository URL has not been entered")
+if (grepl("enter all", params$members, fixed = TRUE)) blockers <- c(blockers, "member names/IDs are incomplete")
+if (!isTRUE(params$group_review_confirmed)) blockers <- c(blockers, "group review and interpretation are not yet confirmed")
+if (isTRUE(params$final_mode) && length(blockers)) {
+  stop("Final mode blocked: ", paste(blockers, collapse = "; "),
+       ". Resolve these items; keep final_mode FALSE for a review render.")
+}
+```
+
+**Members:** `r params$members`  
+**Code and data repository:** `r if (nzchar(params$repository_url)) params$repository_url else "To be added before submission."`
+
+```{r review-status, echo=FALSE, results='asis'}
+if (!isTRUE(params$final_mode)) {
+  cat("**Review version.** The computations below run from the supplied files. This is not a submission-ready claim. Outstanding items: ",
+      paste(blockers, collapse = "; "), ".\n\n", sep = "")
+}
+```
+
+# Research purpose and design
+
+## Rationale
+
+AI-assisted programming makes the checking of generated code a substantive concern. A 24-participant study identified difficulties understanding and debugging generated suggestions [@vaithilingam2022]. @barke2023 distinguished examination, execution/testing, static analysis and documentation lookup in observed interactions with Copilot. These concepts motivate examining the verification practices discussed in this corpus; they do not validate our text indicators or establish their prevalence.
+
+Responsibility is also a practical question: GitHub's provider guidance expects users to review and validate suggestions [@githubcopilot]. Here, responsibility means expressed expectations about who should understand, check, approve or remain answerable for code. It is not a legal judgement. @obrien2025 shows why reported confidence and verification accounts should be distinguished from observed success. Accordingly, this project measures what people write and how they reply, rather than their actual workplace behaviour or code quality.
+
+Related online-discourse research already exists, including the explicitly unvalidated theory proposed in the preprint by @agarwal2026. Our contribution is a bounded, reproducible connection between textual description, an exploratory association, lexical clustering and observed reply relationships. We do not claim to be the first investigation of this topic.
+
+## Connected research questions
+
+**Overall question:** How are responsibility and verification of AI-generated code discussed online, and how are these discussions structured through reply interactions?
+
+| Question | Analytical contribution |
+|:--|:--|
+| RQ1. What responsibilities and verification practices are discussed in relation to AI-generated code? | Describe vocabulary and candidate content indicators, then interpret selected examples in context. |
+| RQ2. Is mentioning at least one specific code-verification practice associated with whether a comment receives a direct reply? | Preserve the teammate's hypothesis test, with explicit annotation provenance and inferential limits. |
+| RQ3. What content clusters emerge from the messages, and which aspects of responsibility or verification characterise each cluster? | Test whether lexical groupings are interpretable, rather than assuming clear themes must exist. |
+| RQ4. Which participants and content clusters receive replies, and how are reply interactions structured? | Preserve the author network and add a comment-level content-to-reply bridge. |
+
+The revised RQ2 replaces the earlier proposed comparison of reading versus testing mentions. This change is documented rather than presented as an unchanged, preregistered design. RQ4 retains the teammate's completed structural analysis and adds the original content linkage. All four analyses concern the same frozen corpus, but the clustering eligibility rule is reported separately.
+
+# Data, collection and analytical boundaries
+
+## Source and collection provenance
+
+The supplied files identify Hacker News as the source and contain comment IDs, parent IDs, authors, Unix timestamps, HTML text and thread titles. The official API represents stories and comments as items; `parent` and `kids` encode observed reply relationships, while `dead` and `deleted` indicate unavailable content [@hnapi]. These fields support a reply network without inventing edges.
+
+**Original collection record:** `r params$collection_note`
+
+The repository includes a supplementary R collector using `jsonlite` and a supplementary cleaner using `xml2`. The collector traverses `kids`, retains source IDs, records requests/failures and saves a dated new snapshot. It is not the missing original collector and is not executed while knitting. A fresh download can differ from the supplied snapshot and must not silently replace it. The group's original dates, inclusion criteria and collection limitations belong in `data/collection_manifest.csv` before submission.
+
+```{r data-loading-code, eval=FALSE}
+raw <- read_comments(here::here("data", "raw", "hn_comments_raw.csv"))
+comments <- read_comments(
+  here::here("data", "processed", "hn_comments_clean.csv"), clean = TRUE)
+audit <- audit_comments(raw, comments)
+```
+
+## Cleaning audit and sample composition
+
+```{r audit-summary, echo=FALSE}
+show_table(audit$summary, "Data and reply-definition audit", digits = 0)
+```
+
+The clean file contains `r nrow(comments)` unique comments from `r nrow(audit$threads)` threads and `r length(unique(comments$author))` authors. The removed IDs `r if (audit$removed_exactly_dead_deleted) "are exactly the dead/deleted records" else "require further exclusion review"`; the retained shared fields are unchanged. Original IDs and raw text are preserved. Absence of duplicated IDs or unmatched raw comment parents establishes internal consistency, not completeness of API collection.
+
+```{r thread-composition, echo=FALSE}
+thread_display <- audit$threads[, c("thread_id", "title", "raw_n", "clean_n", "authors")]
+thread_display$title <- short_text(thread_display$title, 66)
+names(thread_display) <- c("Thread ID", "Thread title", "Raw", "Clean", "Authors")
+show_table(thread_display, "Selected discussions; author counts are not additive across threads", 0)
+```
+
+Observed comment timestamps range from `r format(min(comments$created_utc), "%d %B %Y", tz="UTC")` to `r format(max(comments$created_utc), "%d %B %Y", tz="UTC")`. This is the observed span, not proof of continuous coverage. The three largest threads contribute `r fmt_pct(sum(sort(table(comments$thread_id), decreasing=TRUE)[1:3]) / nrow(comments))` of comments. These selected discussions are not a probability sample of Hacker News or programmers.
+
+## Variables and units
+
+| Variable or object | Definition and unit |
+|:--|:--|
+| `comment_id`, `thread_id`, `parent_id` | Character keys; joins use IDs, never spreadsheet row order. |
+| `text` / `text_raw` | Clean display text / preserved HTML source; quotations remain available for context. |
+| `received_reply` | A comment has at least one direct child retained in the current clean corpus. |
+| `verification_specific` | Teammate's separately coded TRUE/FALSE mention of a specific practice; not inferred from our dictionary. |
+| Candidate indicators | Non-exclusive lexical matches; not endorsed beliefs or validated manual labels. |
+| Text cluster | Exploratory assignment of an eligible comment, not an author's permanent position. |
+| Author edge | Replying author A to parent-comment author B within matched retained comments. |
+
+Using raw rather than clean child IDs changes the reply outcome for `r nrow(audit$reply_definition_changes)` retained comment(s). We retain the clean-only definition throughout. Replies removed during cleaning, replies after collection and replies outside the selected corpus cannot be interpreted as observed non-events. The root-story records are absent, so top-level story replies are excluded from the author graph.
+
+# RQ1: responsibility and verification in the text
+
+## Representation and descriptive measures
+
+Text is lowercased using a stable ASCII mapping, URLs are removed, common contractions are expanded, and alphabetic tokens of at least two characters are retained. A frozen English stopword list is used with negators such as *not* preserved. We retain unstemmed forms for readability and report this limitation. Quoted material remains in the primary text view because flattened quotation boundaries cannot be removed reliably without contextual review.
+
+```{r rq1-code, eval=FALSE}
+text_result <- analyse_text(comments)
+head(text_result$frequencies, 20)
+text_result$candidate_summary
+```
+
+```{r rq1-frequent-words, echo=FALSE, fig.height=4.7, fig.cap='Frequent retained words across the clean corpus. Occurrences describe discourse, including quoted material; they do not count distinct people or endorsed practices.'}
+plot_text_frequencies(text_result)
+```
+
+The leading retained terms are `r paste(head(text_result$frequencies$term, 6), collapse=", ")`. Broad topic words are expected in a deliberately selected corpus. Frequency alone cannot identify who is responsible, whether a practice is advocated, or whether it works. Automated content measures require contextual validation [@grimmer2013].
+
+```{r rq1-candidate-mentions, echo=FALSE, fig.height=4.0, fig.cap='Comments matching each dictionary indicator. Categories overlap, and a match may be quoted, negated or critical. These indicators are not the RQ2 manual labels.'}
+plot_candidate_mentions(text_result)
+```
+
+The indicators adapt verification concepts from the literature and add corpus-relevant responsibility and formal-verification language. The exact patterns and all matches are exported for inspection. Their counts are screening summaries: for example, *test* can occur in criticism of testing, while a practice can be expressed without a dictionary term. Differences between categories cannot be interpreted as unbiased differences in real-world practice prevalence.
+
+```{r rq1-indicator-table, echo=FALSE}
+indicator_display <- text_result$candidate_summary[, c("label", "n_comments", "percentage")]
+names(indicator_display) <- c("Candidate indicator", "Comments", "Percent of corpus")
+show_table(indicator_display, "Non-exclusive lexical indicators", 1)
+```
+
+## Contextual reading: what the indicators can and cannot mean
+
+The following purposively chosen examples were read to illustrate distinctions, not to claim a representative qualitative coding study. IDs make each interpretation traceable to the supplied text.
+
+| Comment ID | Contextual interpretation |
+|:--|:--|
+| 43862722 | Describes changing an AI-generated pull-request workflow so that a human owns each request; links review independence with identifiable responsibility. |
+| 43861845 | Places responsibility on the submitting programmer while also supporting a second human review when required. |
+| 43864090 | Combines AI-assisted preliminary review, human contextual review and continued author ownership; these are compatible practices rather than mutually exclusive camps. |
+| 43867077 | Questions whether making the approver responsible for fixes could discourage helpful reviewers; responsibility is contested rather than uniformly allocated. |
+| 43863986 | Discusses property-based testing and defining properties, providing a concrete example of an execution/testing practice. |
+| 43862230 | Uses apparent sarcasm about regenerating inconvenient unit tests; the presence of testing words does not establish support for the practice. |
+
+Together, these examples answer RQ1 at a bounded level: the corpus contains discussion of author ownership, independent human review, automated checks and the adequacy of tests. They also show disagreement about allocating responsibility. The lexical summaries describe how visible these expressions are under the stated dictionary; they do not quantify validated attitudes. This distinction motivates RQ2's separate specific-practice annotation and RQ3's independent exploration of vocabulary groupings.
+
+# RQ2: specific verification mentions and direct replies
+
+## Question, measurement and hypotheses
+
+RQ2 concerns a comment-level association. **H0:** mentioning a specific verification practice and receiving a retained direct reply are independent. **H1:** the two variables are associated. The test is two-sided in its association interpretation, using a reference significance level of 0.05.
+
+**Annotation provenance:** `r rq2$provenance`
+
+If supplied, `data/annotations/verification_labels.csv` must contain every clean `comment_id` exactly once and a non-missing TRUE/FALSE label. The code joins by ID and rejects mismatches. Availability of labels establishes row-level computational traceability, not their coding validity. The codebook must specify quote-only mentions, negation, vague advice and ambiguous cases. A missing label is not automatically FALSE.
+
+```{r rq2-main-code, eval=FALSE}
+rq2 <- analyse_hypothesis(comments,
+  here::here("data", "annotations", "verification_labels.csv"), clean_path)
+rq2$table
+chisq.test(rq2$table, correct = TRUE)
+```
+
+```{r rq2-observed-table, echo=FALSE}
+tab_display <- rq2$rates
+tab_display$reply_rate <- 100 * tab_display$reply_rate
+names(tab_display) <- c("Specific practice", "No reply", "Reply", "Total", "Reply percent")
+show_table(tab_display, "Specific verification mention and retained direct reply", 1)
+```
+
+## Test and interpretation
+
+Pearson's chi-squared test with Yates' continuity correction is used for this 2-by-2 table; the correction is explicit rather than left to an unnoticed software default [@rchisq].
+
+```{r rq2-result, echo=FALSE}
+rq2$test
+show_table(as.data.frame.matrix(rq2$expected), "Expected cell counts (rows: FALSE, TRUE; columns: FALSE, TRUE)", 2)
+```
+
+The minimum expected count is `r fmt_num(min(rq2$expected), 2)`, so the usual expected-count check `r if (all(rq2$expected > 5)) "is satisfied" else "is not satisfied and requires reconsideration"`. **This does not establish independence of comments.** There are `r sum(table(comments$author) > 1)` authors with repeated contributions, nested discussions and only `r nrow(audit$threads)` threads. Pooling them treats dependent conversational observations as independent under the reference model. Fisher's exact test or a Monte Carlo p-value would not remove that design problem.
+
+```{r rq2-rate-plot, echo=FALSE, fig.height=3.5, fig.cap='Observed reply proportions. Denominators are comments in each verification category; reply is not agreement. Annotation provenance is shown below the bars.'}
+plot_reply_rates(rq2)
+```
+
+The observed reply rates are `r fmt_pct(rq2$rates$reply_rate[2])` for specific-practice mentions and `r fmt_pct(rq2$rates$reply_rate[1])` otherwise, a difference of `r fmt_num(rq2$difference_pp, 2)` percentage points. The reference test gives chi-squared = `r fmt_num(unname(rq2$test$statistic), 4)` with 1 degree of freedom and p = `r fmt_num(rq2$test$p.value, 4)`.
+
+```{r rq2-conditional-conclusion, echo=FALSE, results='asis'}
+if (rq2$test$p.value >= 0.05) {
+  cat("Under the independent-comment reference model, the test does not provide statistically significant evidence of an association in this table. It does not prove that verification mentions have no relationship with replies.\n\n")
+} else {
+  cat("Under the independent-comment reference model, this table produces a p-value below 0.05. Dependence and sampling limitations prevent treating this alone as reliable population-level evidence.\n\n")
+}
+```
+
+The effect description and design limitations matter more than a binary significant/non-significant label [@asa2016]. Thread visibility, comment timing, text length and conversational context are not controlled. A reply may challenge or disagree with a comment. The result is exploratory, not causal; while row-level labels are absent, it remains a reconstruction of the teammate's reported table.
+
+# RQ3: exploratory content clusters
+
+## Representation, distance and selection rule
+
+The purpose is to investigate whether meaningful groupings emerge, not to guarantee that they do. For clustering only, the broad terms `r paste(clusters$settings$domain_stopwords, collapse=", ")` are removed so a shared topic label does not dominate similarity. Comments need at least five retained tokens. Terms must occur in at least two eligible documents and at most 80% of them; empty vectors are excluded. These are explicit pragmatic choices, not universal statistical thresholds. Short excluded comments remain in the reply network.
+
+For nonzero term counts, TF is $1+\log(c_{dt})$, IDF is $\log(N/df_t)$, and their product is normalised to unit Euclidean length. Cosine dissimilarity is then $1-x_i^T x_j$. This compares vocabulary profiles while reducing raw length effects [@manning2008]. No author ID, thread ID or reply outcome enters these vectors.
+
+```{r rq3-code, eval=FALSE}
+clusters <- analyse_clusters(comments, text_result)
+clusters$diagnostics
+clusters$cluster_summary
+clusters$sensitivity <- cluster_linkage_sensitivity(clusters)
+```
+
+Average-link hierarchical clustering is the primary method. We examine k = 2 to 8 and choose the highest mean silhouette among solutions with at least five documents in each cluster. The minimum size is a readability guard, not proof of adequacy. If no solution passes, the highest-silhouette partition is retained **only to diagnose the failure**, with that fallback clearly reported. Silhouette compares within-cluster dissimilarity with the closest alternative cluster [@rsilhouette].
+
+```{r rq3-diagnostic-table, echo=FALSE}
+show_table(clusters$diagnostics, "Candidate partitions; selected marks the declared rule", 4)
+```
+
+```{r rq3-diagnostic-plot, echo=FALSE, fig.height=3.6, fig.cap='Silhouette and minimum-size diagnostics. Crosses mark partitions failing the five-document guard; the filled marker identifies the selected partition, not a validated optimum.'}
+plot_cluster_diagnostics(clusters)
+```
+
+There are `r clusters$settings$n_clustered` eligible comments and `r clusters$settings$n_terms` terms; `r clusters$settings$n_excluded` comments are unassigned. The rule selects k = `r clusters$selected_k`, with mean silhouette `r fmt_num(clusters$settings$selected_mean_silhouette, 4)`. **Selection status:** `r clusters$settings$selection_reason`
+
+```{r rq3-dendrogram, echo=FALSE, fig.height=4.2, fig.cap='Comment hierarchy under average linkage and cosine dissimilarity. Rectangles show the selected cut; a visual split is not evidence of distinct social groups.'}
+plot_cluster_dendrogram(clusters)
+```
+
+## Cluster profiles and contextual checks
+
+```{r rq3-profile-table, echo=FALSE}
+show_table(clusters$cluster_summary[, c("cluster", "n_comments", "mean_silhouette", "median_retained_tokens", "top_terms")],
+  "Exploratory profiles; top terms are descriptors, not validated theme names", 3)
+```
+
+```{r rq3-example-table, echo=FALSE}
+example_display <- clusters$examples[, c("cluster", "role", "comment_id", "text")]
+example_display$text <- short_text(example_display$text, 160)
+show_table(example_display, "Medoid and lowest-silhouette examples for contextual inspection")
+```
+
+The medoid is the comment with the smallest average within-cluster dissimilarity; the boundary example has the lowest silhouette. A shared word can connect otherwise different messages, while different wording can express the same concern. Consequently, top terms must be checked against both representative and difficult examples. The original text for every example remains in the data and the exported context table.
+
+```{r rq3-quality-reading, echo=FALSE, results='asis'}
+if (clusters$settings$used_fallback || clusters$settings$selected_mean_silhouette < 0.05) {
+  cat("**The primary representation does not provide convincing evidence of well-separated, balanced thematic clusters.** The selected partition is therefore reported as a diagnostic lexical partition. A large residual group is heterogeneous; a tiny group can reflect incidental shared wording. Assigning confident names such as 'supporters' and 'opponents' would exceed this evidence. This weak result answers RQ3 by identifying a limitation of the representation and sample, rather than hiding it.\n\n")
+} else {
+  cat("The selected partition provides candidate lexical profiles, but silhouette and cluster sizes alone do not validate semantic themes. Interpret the representative and boundary texts, together with thread composition, before assigning substantive labels.\n\n")
+}
+```
+
+```{r rq3-thread-plot, echo=FALSE, fig.height=3.7, fig.cap='Thread composition within each lexical cluster. Concentration in a thread may reflect its prompt and vocabulary rather than a general topic division.'}
+plot_cluster_thread(clusters)
+```
+
+The profile table also reports median retained length, because normalisation does not eliminate every length-related effect. Thread composition and examples are checks on interpretation, not formal external validation. The pipeline does not use manually verified relevance labels; eligibility is lexical length within selected topic threads, so contextual or promotional content may remain.
+
+## Sensitivity to linkage
+
+Complete linkage on the same cosine dissimilarity and Ward.D2 on Euclidean distances between the same normalised vectors are included as exploratory sensitivity checks. Ward is not applied directly to cosine dissimilarity. Each method uses the same k range and size guard; its selected diagnostic result is shown below. Since Ward uses a different dissimilarity scale, this is not a leaderboard proving one method best.
+
+```{r rq3-sensitivity, echo=FALSE}
+show_table(clusters$sensitivity[clusters$sensitivity$selected_within_method,
+  c("method", "k", "mean_silhouette", "sizes", "admissible")],
+  "Selected diagnostic partition within each linkage/distance specification", 4)
+```
+
+If alternatives also have near-zero or negative separation, changing linkage does not rescue a strong thematic claim. More carefully delimited documents, a broader and better documented sample, or validated content labels would be appropriate future work. We retain the declared primary method and report the unsuccessful diagnostics transparently rather than choosing an attractive partition after inspecting a desired conclusion.
+
+# RQ4: direct-reply structure and the content bridge
+
+## Network construction
+
+Nodes are authors who occur in at least one retained between-author reply. A directed edge A to B means A replied to a retained comment by B. Multiple events between the same ordered pair become one edge with a separate frequency count. Self-replies are excluded from this between-author graph if present; this corpus contains `r net_value("Self-reply events")`.
+
+```{r rq4-code, eval=FALSE}
+network <- analyse_network(comments, seed = 3020)
+network$summary
+head(network$node_metrics, 8)
+# Frequency is stored separately, not as shortest-path distance.
+igraph::betweenness(network$graph, directed = TRUE,
+                    weights = NA, normalized = TRUE)
+```
+
+```{r rq4-network-summary, echo=FALSE}
+show_table(network$summary, "Directed author network properties", 4)
+```
+
+There are `r net_value("Matched reply events")` matched reply events, `r net_value("Unique directed author pairs")` unique directed edges and `r net_value("Network authors")` authors in the graph. The `r net_value("Authors outside graph")` other clean-corpus authors are not added as isolated vertices; doing so would change density and normalised centrality. The omitted relations include `r sum(audit$parent_type == "root_story")` replies to root stories and `r sum(audit$parent_type == "removed_or_missing_parent")` replies whose parent comment is unavailable after cleaning.
+
+## Whole network and justified subgraph
+
+```{r rq4-full-network, echo=FALSE, fig.height=5.0, fig.cap='Full directed author reply network. All graph participants are shown with equal node size. Arrows point from the replying author to the parent author; positions come from a seeded force-directed layout and do not measure semantic similarity.'}
+plot_network_full(network)
+```
+
+```{r rq4-largest-component, echo=FALSE, fig.height=5.0, fig.cap='Largest weakly connected component, selected because it contains the largest connected set when direction is ignored. Selected high-in-degree authors are labelled for readability; all node sizes are equal.'}
+plot_network_lcc(network, label_count = 6)
+```
+
+The largest weak component contains `r net_value("Largest weak component")` authors, or `r fmt_pct(net_value("Largest weak component share"))` of graph participants. Weak connectivity does not imply mutual exchange between every pair: the graph has `r net_value("Strong components")` strong components, and the largest contains `r net_value("Largest strong component")` authors. Pooling threads can connect authors who participate in more than one discussion; it does not make the corpus a single conversation or indicate consensus.
+
+```{r rq4-degree-plot, echo=FALSE, fig.height=3.4, fig.cap='In-degree distribution. In-degree counts distinct incoming authors after repeated author pairs are collapsed.'}
+plot_indegree_distribution(network)
+```
+
+## Centrality and interpretation
+
+In-degree measures distinct authors replying to an author; incoming strength measures reply-event volume. Betweenness measures participation in directed shortest paths and is normalised over the full graph. It is explicitly unweighted: treating reply frequency as a path distance would change the question [@igraphbetween].
+
+```{r rq4-centrality, echo=FALSE}
+centrality_display <- head(network$node_metrics[, c("author", "indegree", "instrength", "betweenness")], 8)
+names(centrality_display) <- c("Author", "In-degree", "Reply events received", "Normalised betweenness")
+show_table(centrality_display, "Participants ranked by in-degree, then betweenness", 4)
+```
+
+The leading two participants in the table are `r paste(head(network$node_metrics$author, 2), collapse=" and ")`, with in-degrees `r paste(head(network$node_metrics$indegree, 2), collapse=" and ")`. Their normalised betweenness values are `r paste(formatC(head(network$node_metrics$betweenness, 2), digits=4, format="f"), collapse=" and ")`. Receiving replies from many distinct authors and occupying shortest-path positions are different structural roles. Neither establishes expertise, agreement, professional identity or causal influence. On the supplied snapshot, these calculations reproduce the original report's main numerical findings.
+
+## Which content receives replies?
+
+To connect RQ3 and RQ4, clusters are joined to **comments** through `comment_id`. The receiving content belongs to the parent comment, not the replying child. An author can contribute to several clusters. Short/unassigned child comments still count as replies to a clustered parent under the common outcome definition.
+
+```{r rq4-bridge-code, eval=FALSE}
+bridge <- analyse_cluster_replies(comments, clusters$assignments)
+bridge$receiver_rates
+```
+
+```{r rq4-bridge-table, echo=FALSE}
+bridge_display <- bridge$receiver_rates
+bridge_display$reply_rate <- 100 * bridge_display$reply_rate
+names(bridge_display) <- c("Receiver cluster", "Comments", "Comments with reply", "Reply percent", "Incoming reply events")
+show_table(bridge_display, "Descriptive reply outcomes by receiving-comment cluster", 1)
+```
+
+This table provides the requested content-to-interaction connection, but the weakest clustering result limits its substantive interpretation. A high rate in a very small lexical cluster is unstable and does not demonstrate that its theme attracts replies. No extra significance test is added. The exported sender-by-receiver cluster matrix includes only events with both cluster labels; its coverage table records excluded/unassigned events.
+
+# Overall findings, limitations and conclusion
+
+RQ1 identifies discussion of human ownership, review independence and several forms of verification, alongside disagreement about allocating responsibility. Its contextual examples show why word matches cannot be read as endorsement. RQ2 connects specific-practice mentions with observed engagement, but the available reference test offers limited inferential support because comments are dependent. Its row-level annotation status is `r if (rq2$row_labels_available) "available for computational reconstruction, subject to the documented coding review" else "unresolved: only the teammate-reported aggregate is available"`. RQ3 checks an additional assumption: that the text divides into clear themes. The separation diagnostics determine how cautiously its algorithmic groups should be interpreted; they do not establish stable thematic communities. RQ4 identifies genuine reply relationships and distinguishes receiving attention from occupying connecting positions.
+
+The substantive implication is modest: this corpus shows that checking AI-generated code is discussed together with human responsibility and review organisation. It does not establish which practice works best, whether participants follow their stated practices, or whether AI improves workplace performance. The methodological contribution is a traceable connection from comment text to annotations, lexical profiles and actual reply links, including cases where the evidence does not support a stronger claim.
+
+The principal limitations are:
+
+1. **Sampling and provenance:** five selected threads, uneven sizes and discontinuous dates restrict generalisation. Original collection metadata is `r if (manifest_complete) "recorded in the manifest; its completeness still depends on the original request logs" else "incomplete in the current review build"`.
+2. **Measurement:** quotations, sarcasm, vague language and dictionary omissions affect lexical indicators. Specific-practice annotations require a documented codebook and review.
+3. **Inference:** comments share authors and conversational context; pooled chi-square assumptions remain unresolved. Non-significance is not evidence of equivalence or absence of an effect.
+4. **Clustering:** short texts and sparse overlapping vocabulary can produce small outlier clusters and a heterogeneous remainder. A numerical partition is not automatically meaningful.
+5. **Network boundaries:** root-story replies, removed parents and authors outside retained edges are excluded. Centrality depends on this boundary and the pooled-thread design.
+6. **Observation window:** reply outcomes are measured only in the supplied snapshot; later responses and unequal opportunity to receive replies are unobserved.
+
+Future work should improve sampling and annotation evidence before adding more complex models. The current study supports conclusions about expressed discussion and retained interactions within its bounded corpus, with uncertainty made explicit.
+
+# Reproducibility and group contributions
+
+The project uses relative paths, a frozen snapshot, character IDs, explicit TRUE/FALSE parsing, UTF-8 text and UTC timestamps. Missing or mismatched required inputs stop the relevant computation. The original teammate files are preserved in `original_submissions/`. Reconstructed RQ4 code and new RQ1/RQ3 code are separately identifiable; RQ2 retains its reported counts only for the exact original snapshot when labels are unavailable.
+
+Full functions, data and run instructions accompany this report. Package installation and optional recollection are separate from rendering. The main analysis calls are displayed above; Appendix A shows the core representation and graph operations. CSV tables, vector figures and session information are generated in `outputs/`. A second group member should run the project from a fresh R session and check the result interpretations, figure captions, poster and repository access before submission.
+
+**Group evaluation of AI assistance:** AI assistance was used to research sources, develop and review code, and prepare this review draft. The subject outline permits support but requires the group's own critical evaluation and understanding. The group must check the executed results, revise interpretations where needed, and record actual contributions in `docs/group_contributions.csv`; no unperformed human review or original collection is claimed here.
+
+# Appendix A: core analytical operations
+
+The executable implementations include validation and edge-case handling in addition to these central operations. The full scripts are in the accompanying repository.
+
+```{r appendix-tfidf-core, eval=FALSE}
+# counts: document-by-term counts after documented eligibility/vocabulary rules
+tf <- counts
+tf[counts > 0] <- 1 + log(counts[counts > 0])
+idf <- log(nrow(counts) / colSums(counts > 0))
+tfidf <- sweep(tf, 2, idf, "*")
+tfidf <- tfidf / sqrt(rowSums(tfidf^2))
+distance_matrix <- 1 - tcrossprod(tfidf)
+distance_matrix[distance_matrix < 0] <- 0
+diag(distance_matrix) <- 0
+cosine_distance <- as.dist(distance_matrix)
+tree <- hclust(cosine_distance, method = "average")
+groups <- cutree(tree, k = selected_k)
+cluster::silhouette(groups, cosine_distance)
+```
+
+```{r appendix-network-core, eval=FALSE}
+parent_index <- match(comments$parent_id, comments$comment_id)
+matched <- !is.na(parent_index)
+reply_events <- data.frame(
+  from = comments$author[matched],
+  to = comments$author[parent_index[matched]])
+reply_events <- reply_events[reply_events$from != reply_events$to, ]
+author_edges <- aggregate(list(frequency = rep(1, nrow(reply_events))),
+                          reply_events, sum)
+g <- igraph::graph_from_data_frame(author_edges, directed = TRUE)
+igraph::degree(g, mode = "in", loops = FALSE)
+igraph::betweenness(g, directed = TRUE, weights = NA, normalized = TRUE)
+```
+
+```{r appendix-environment, echo=FALSE, results='asis'}
+packages <- c("rmarkdown", "knitr", "here", "cluster", "igraph")
+versions <- data.frame(Package = packages,
+  Version = vapply(packages, function(p) as.character(utils::packageVersion(p)), character(1)))
+print(show_table(versions, paste("R version", getRversion(), "- full session information is exported")))
+```
+
+# References {-}

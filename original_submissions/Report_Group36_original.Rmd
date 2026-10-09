@@ -1,0 +1,48 @@
+---
+title: "COMP 3020 Group Project"
+author: "Group 36"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## RQ2: Is mentioning at least one specific code-verification practice associated with whether a comment receives a direct reply?
+
+Two categorical variables were used in this analysis. The variable `verification_specific` indicates whether a comment mentions at least one specific method for verifying or testing AI-generated code. The variable `received_reply` indicates whether the comment received at least one direct reply
+
+The hypotheses:
+
+- **H0:** Mentioning a specific verification practice and receiving a direct reply are independent
+- **H1:** Mentioning a specific verification practice and receiving a direct reply are associated
+
+A Chi-square test for independence was used to test whether there is an association between them
+```{r}
+Hacker_News_comments = read.csv("hn_comments_clean(after add true false).csv", 
+                                stringsAsFactors = FALSE)
+
+verification_table = table(Hacker_News_comments$verification_specific, 
+                           Hacker_News_comments$received_reply)
+
+verification_table
+
+```
+The contingency table shows that 69 of the 155 comments that did not mention a specific verification practice received a direct reply. For comments that did mention a specific verification practice, 52 of 123 received a direct reply.
+
+```{r}
+#Chi-square test for independence
+chi_result = chisq.test(verification_table)
+chi_result
+```
+
+The Chi-square test gave a p-value of 0.8008. Since the p-value is greater than 0.05, the null hypothesis is not rejected. This means that there is no statistically significant evidence of an association between mentioning a specific code-verification practice and receiving a direct reply in the selected Hacker News discussions.
+
+```{r}
+#check expected counts
+chi_result$expected
+```
+
+All expected counts are greater than 5, so the expected count condition for the Chi-square test is satisfied.
+
+The results indicate that, within the dataset collected from Hacker News, whether a comment mentions a specific verification practice has no bearing on whether it receives a direct response. This analysis merely examines whether a relationship exists between the two variables. Finally, the fact that a thread receives a response does not necessarily imply that the participants agree with the comment in question. Another limitation is that classifying comments as TRUE or FALSE required some judgement, especially for comments that were not completely clear.

@@ -1,0 +1,37 @@
+VALIDATION AT HANDOFF — 9 October 2026
+
+Performed:
+- Read both supplied CSV files and checked row IDs, nulls, removed records,
+  retained field equality, timestamps and parent relationships.
+- Preserved supplied CSVs and original teammate files byte-for-byte.
+- Independently reconstructed the reported RQ2 table in Python/SciPy:
+  [[86,69],[71,52]], Yates chi-square about0.063666, p about0.8007927.
+  This checks the arithmetic, NOT the missing comment-level annotation.
+- Independently rebuilt author reply pairs and centrality in Python:
+  198 events,193 unique directed pairs,144 nodes,density0.0093725719;
+  9 weak components,largest128; leading centrality matches teammate PDF.
+- Independently reproduced the documented text recipe in Python:
+  264 eligible texts,1250terms; average-link partitions weak/imbalanced.
+  Python and R can resolve tied distances differently; R output is authoritative
+  for this R project, so no exact cluster-size regression is hard-coded.
+- Reviewed R source semantics, field interfaces, keyed joins and failure checks.
+- Parsed both YAML headers, checked unique Rmd chunk names/fences and bib keys.
+- Fixed Windows line-ending handling in the exact-snapshot aggregate guard.
+- Compiled a PRIVATE poster layout surrogate with Pandoc/XeLaTeX using numeric
+  substitutions and placeholder figure regions. It fits one A3 landscape page.
+  This tests the LaTeX layout only; it is NOT an R-knit poster or result artifact
+  and is not included as a deliverable.
+
+Not performed / not asserted:
+- R execution: Rscript is not installed in the preparation environment.
+- R Markdown knitting of either final source.
+- Final report page count and actual R-generated figure/table layout.
+- Validation of original RQ2 manual labels, which were not supplied.
+- Historical collection completeness or use of an original R collector.
+- Marker access to a GitHub/GitLab repository, which has not been created here.
+- Human group review, which remains for the students.
+
+Next computational check:
+Run install_packages.R, run_analysis.R and check_project.R in a fresh RStudio
+session, then knit the report and poster. Inspect the actual output and rendered
+page counts. The README explains the remaining evidence and final-mode checks.

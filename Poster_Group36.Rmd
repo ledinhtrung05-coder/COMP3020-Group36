@@ -1,0 +1,100 @@
+---
+output:
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: false
+classoption: landscape
+papersize: a3
+geometry: margin=0.65in
+fontsize: 12pt
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{graphicx}
+  - \pagestyle{empty}
+  - \setlength{\parindent}{0pt}
+params:
+  final_mode: false
+  group_review_confirmed: false
+  members: "Group 36 - enter all names and student IDs"
+  repository_url: ""
+---
+
+```{r poster-setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+here::i_am("Poster_Group36.Rmd")
+source(here::here("run_analysis.R"), encoding="UTF-8")
+net_value <- function(name) network$summary$value[match(name, network$summary$metric)]
+tex_escape <- function(x) {
+  replacements <- c("\\"="\\textbackslash{}", "&"="\\&", "%"="\\%",
+    "$"="\\$", "#"="\\#", "_"="\\_", "{"="\\{", "}"="\\}",
+    "~"="\\textasciitilde{}", "^"="\\textasciicircum{}")
+  vapply(strsplit(as.character(x), "", fixed=TRUE), function(chars) {
+    m <- match(chars, names(replacements))
+    chars[!is.na(m)] <- replacements[m[!is.na(m)]]
+    paste(chars, collapse="")
+  }, character(1))
+}
+manifest <- read.csv(here::here("data", "collection_manifest.csv"), colClasses="character", na.strings=c("", "NA"))
+mf <- c("original_collection_utc", "original_selection_reason", "original_collection_R_script")
+complete_manifest <- all(mf %in% names(manifest)) &&
+  all(!is.na(as.matrix(manifest[, mf, drop=FALSE]))) &&
+  all(nzchar(trimws(as.matrix(manifest[, mf, drop=FALSE]))))
+if (isTRUE(params$final_mode) && (!rq2$row_labels_available || !complete_manifest ||
+    !isTRUE(params$group_review_confirmed) || !nzchar(params$repository_url) ||
+    grepl("enter all", params$members, fixed=TRUE))) {
+  stop("Complete labels, original provenance, member/repo fields and group review before final poster mode.")
+}
+```
+
+\begin{center}
+{\fontsize{26}{30}\selectfont\bfseries Responsibility and verification of AI-generated code}\par
+\vspace{3mm}
+{\Large Content and reply interactions in five selected Hacker News discussions}\par
+\vspace{2mm}
+{\large `r tex_escape(params$members)`}\par
+{\small `r if (!params$final_mode) "REVIEW DRAFT - verify annotations, collection history and rendered results before submission" else "COMP3020 Social Web Analytics"`}
+\end{center}
+\vspace{2mm}
+\noindent\colorbox{cyan!8}{\parbox{0.975\textwidth}{\vspace{2mm}\large\textbf{Takeaway:} The discussions connect technical checking with human ownership and review. Reply prominence is observable; endorsement, effective verification and stable thematic groups require stronger evidence.\vspace{2mm}}}
+\vspace{5mm}
+
+\noindent\begin{minipage}[t]{0.315\textwidth}
+{\Large\bfseries Purpose and data}\par\medskip
+How are responsibility and verification discussed, and how are these discussions structured through replies?\par\medskip
+\textbf{`r nrow(raw)` raw comments -> `r nrow(comments)` retained comments}\par
+`r length(unique(comments$author))` authors; `r nrow(audit$threads)` selected threads. Removed `r sum(audit$removed$dead)` dead and `r sum(audit$removed$deleted)` deleted records. Three threads supply `r round(100*sum(sort(table(comments$thread_id),decreasing=TRUE)[1:3])/nrow(comments),1)`\% of retained comments. This is a bounded corpus, not a representative sample.\par\medskip
+\textbf{RQ1: What is discussed?}\par
+Word frequencies, transparent non-exclusive lexical indicators and contextual examples. Mentions do not establish endorsement or behaviour.\par
+\includegraphics[width=\linewidth,height=6.4cm,keepaspectratio]{outputs/figures/rq1_candidate_mentions.pdf}\par
+Examples link author ownership with human review (comments 43861845, 43864090), while 43867077 questions whether additional responsibility could discourage reviewers. Tests can also be mentioned sarcastically (43862230).\par\medskip
+\textbf{Research foundation}\par
+Observed verification strategies motivate the concepts (Barke et al., 2023); accounts should be distinguished from successful practice (O'Brien, 2025). Our indicators are not validated behavioural measures.\par
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\textwidth}
+{\Large\bfseries Association and clustering}\par\medskip
+\textbf{RQ2: Are specific-practice mentions associated with replies?}\par
+Reply rate with specific practice: \textbf{`r round(100*rq2$rates$reply_rate[2],1)`\%}; without: \textbf{`r round(100*rq2$rates$reply_rate[1],1)`\%}. Difference: `r round(rq2$difference_pp,2)` percentage points.\par\smallskip
+Yates-corrected chi-square: $\chi^2(1)=`r round(unname(rq2$test$statistic),4)`$, $p=`r round(rq2$test$p.value,4)`$. This is an exploratory independent-comment reference model. Repeated authors/conversations undermine independence; a large p-value does not prove no relationship.\par\smallskip
+{\small\textit{`r if (rq2$row_labels_available) "Table recalculated from supplied row labels; coding review still matters." else "Teammate-reported aggregate table; row labels not yet supplied."`}}\par\medskip
+\textbf{RQ3: Do meaningful content clusters emerge?}\par
+Log TF-IDF, L2 normalisation, cosine dissimilarity and average-link hierarchy. `r clusters$settings$n_clustered` eligible comments; k = 2--8 examined with silhouette and size diagnostics. Selected k = `r clusters$selected_k`, silhouette = `r round(clusters$settings$selected_mean_silhouette,3)`.\par
+\includegraphics[width=\linewidth,height=5.3cm,keepaspectratio]{outputs/figures/rq3_diagnostics.pdf}\par
+`r if(clusters$settings$used_fallback || clusters$settings$selected_mean_silhouette<0.05) "The primary partition is weak/imbalanced. We do not interpret it as convincing thematic groups." else "Profiles remain exploratory and need contextual checks before substantive naming."` Complete-link and Ward/Euclidean sensitivity checks are reported in the supporting report.\par
+\end{minipage}\hfill
+\begin{minipage}[t]{0.315\textwidth}
+{\Large\bfseries Reply structure and implications}\par\medskip
+\textbf{RQ4: Who and what receives replies?}\par
+`r net_value("Network authors")` author nodes, `r net_value("Unique directed author pairs")` directed pairs and `r net_value("Matched reply events")` reply events. A->B means A replies to B's comment. Largest weak component: `r net_value("Largest weak component")` authors (`r round(100*net_value("Largest weak component share"),1)`\%).\par
+\includegraphics[width=\linewidth,height=7.2cm,keepaspectratio]{outputs/figures/rq4_largest_component.pdf}\par
+`r tex_escape(paste(head(network$node_metrics$author,2),collapse=" and "))` lead in-degree (`r paste(head(network$node_metrics$indegree,2),collapse=" and ")`), with different betweenness (`r paste(formatC(head(network$node_metrics$betweenness,2),digits=4,format="f"),collapse=" and ")`). These are structural roles, not expertise or agreement. Reply rates are linked to the receiving comment's cluster; weak clusters limit substantive comparisons.\par\medskip
+\textbf{Limits and next steps}\par
+Uneven thread sampling, dependent comments, quote/sarcasm ambiguity and network exclusions constrain inference. `r if(!complete_manifest) "Original collection history remains incomplete in this review build." else "Collection provenance is recorded in the accompanying manifest."` Improve sampling and annotation evidence before stronger generalisation.\par\medskip
+\textbf{Reproducibility}\par
+Frozen data, keyed joins, documented parameters, R scripts and source references accompany the report.\par
+{\footnotesize Repository: \texttt{`r if(nzchar(params$repository_url)) tex_escape(params$repository_url) else "ADD REAL REPOSITORY URL"`}}\par
+\end{minipage}
+
+\vfill
+\begin{minipage}{\textwidth}
+\footnotesize Key sources: Barke et al. (2023), doi:10.1145/3586030; O'Brien (2025), doi:10.1145/3706598.3713668; Grimmer and Stewart (2013), doi:10.1093/pan/mps028. Full references, methods, outputs and limitations are in the supporting report.
+\end{minipage}
