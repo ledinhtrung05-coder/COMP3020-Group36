@@ -1,0 +1,13 @@
+"metric","value"
+"Raw comments",313
+"Clean comments",278
+"Removed dead",30
+"Removed deleted",5
+"Threads",5
+"Clean authors",186
+"Authors with multiple comments",55
+"Retained comments receiving a retained reply",121
+"Retained comments receiving any observed raw reply",122
+"Matched comment-to-comment replies",198
+"Replies to root story",78
+"Replies to removed/missing parent",2

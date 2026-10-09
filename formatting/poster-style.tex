@@ -1,0 +1,33 @@
+% One-page, A2 landscape scientific poster. The report uses separate styles.
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{ragged2e}
+\usepackage{array}
+\usepackage{xurl}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\fboxsep}{9pt}
+\definecolor{posterBurgundy}{HTML}{981C3C}
+\definecolor{posterTeal}{HTML}{177B87}
+\definecolor{posterGreen}{HTML}{2A713B}
+\definecolor{posterPaleRose}{HTML}{F7EAEF}
+\definecolor{posterPaleTeal}{HTML}{E8F2F3}
+\definecolor{posterPaleGreen}{HTML}{EBF3EC}
+\definecolor{posterInk}{HTML}{202C36}
+\AtBeginDocument{\fontsize{14}{17}\selectfont\color{posterInk}\RaggedRight}
+\newcommand{\posterheader}[2]{%
+  \noindent\colorbox{posterBurgundy}{%
+    \parbox{\dimexpr\textwidth-2\fboxsep\relax}{%
+      \color{white}\fontsize{31}{36}\selectfont\bfseries #1\par
+      \vspace{2mm}\fontsize{16}{20}\selectfont\mdseries #2\par}}
+  \par\vspace{2mm}}
+\newcommand{\postersection}[2]{%
+  \noindent\colorbox{#1}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \color{white}\fontsize{18}{21}\selectfont\bfseries #2}}\par\vspace{2mm}}
+\newcommand{\posterfinding}[2]{%
+  \par\vspace{2mm}\noindent\colorbox{#1}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{\bfseries #2}}\par\vspace{2mm}}
+\newcommand{\postercaption}[1]{{\fontsize{11}{14}\selectfont\centering #1\par}\vspace{2mm}}
+\urlstyle{same}

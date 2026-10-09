@@ -58,10 +58,10 @@ sum(trimws(hn_clean$author) == "")
 sum(trimws(hn_clean$text) == "")
 
 #save clean data
-write.csv(hn_clean,"data/clean/hn_comments_clean.csv",row.names = FALSE)
+write.csv(hn_clean,"data/processed/hn_comments_clean.csv",row.names = FALSE)
 
 #check saved clean data
-hn_clean = read.csv("data/clean/hn_comments_clean.csv",stringsAsFactors = FALSE)
+hn_clean = read.csv("data/processed/hn_comments_clean.csv",stringsAsFactors = FALSE)
 
 nrow(hn_clean)
 length(unique(hn_clean$comment_id))

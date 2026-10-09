@@ -1,0 +1,7 @@
+"metric","value"
+"Clean comments",278
+"Comments with a cluster label",264
+"Comments without a cluster label",14
+"Matched clean reply events",198
+"Reply events with both comments labelled",185
+"Reply events missing one or both labels",13

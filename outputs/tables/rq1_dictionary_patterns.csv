@@ -1,0 +1,7 @@
+"category","label","pattern"
+"reading_inspection","Reading / inspection","\b(?:read|reading|review|reviewing|inspect|inspecting|inspection)\b(?:\s+[a-z]+){0,3}\s+\b(?:code|diffs?|patch(?:es)?|implementations?|pull requests?)\b|\bcode\s+(?:reviews?|reviewing|inspection)\b|\bpeer\s+review\b"
+"execution_testing","Execution / testing","\b(?:tests?|testing|tested|debug|debugging|debugged|benchmarks?)\b|\b(?:run|running|execute|executing)\b(?:\s+[a-z]+){0,3}\s+\b(?:code|programs?|scripts?|tests?)\b"
+"static_type","Static / type checks","\b(?:static\s+(?:analysis|analy[sz]ers?|checking)|type\s+check(?:s|ing|er|ers)?|linters?|linting|mypy|pyright)\b"
+"formal_verification","Formal verification","\b(?:formal\s+(?:verification|methods?|proofs?)|model\s+checking|theorem\s+prov(?:ers?|ing)|proof\s+assistants?)\b"
+"responsibility_ownership","Responsibility / ownership","\b(?:responsib(?:le|ility|ilities)|accountab(?:le|ility)|liability|liable|ownership|owning)\b|\b(?:own|owns)\s+(?:the\s+)?code\b"
+"understanding_trust","Understanding / trust","\b(?:understand|understands|understanding|understood|trust|trusting|trusted|distrust|confidence|confident)\b"

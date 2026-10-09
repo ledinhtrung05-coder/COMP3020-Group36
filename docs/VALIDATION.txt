@@ -1,37 +1,99 @@
-VALIDATION AT HANDOFF — 9 October 2026
+FINAL VALIDATION — 9 October 2026
 
-Performed:
-- Read both supplied CSV files and checked row IDs, nulls, removed records,
-  retained field equality, timestamps and parent relationships.
-- Preserved supplied CSVs and original teammate files byte-for-byte.
-- Independently reconstructed the reported RQ2 table in Python/SciPy:
-  [[86,69],[71,52]], Yates chi-square about0.063666, p about0.8007927.
-  This checks the arithmetic, NOT the missing comment-level annotation.
-- Independently rebuilt author reply pairs and centrality in Python:
-  198 events,193 unique directed pairs,144 nodes,density0.0093725719;
-  9 weak components,largest128; leading centrality matches teammate PDF.
-- Independently reproduced the documented text recipe in Python:
-  264 eligible texts,1250terms; average-link partitions weak/imbalanced.
-  Python and R can resolve tied distances differently; R output is authoritative
-  for this R project, so no exact cluster-size regression is hard-coded.
-- Reviewed R source semantics, field interfaces, keyed joins and failure checks.
-- Parsed both YAML headers, checked unique Rmd chunk names/fences and bib keys.
-- Fixed Windows line-ending handling in the exact-snapshot aggregate guard.
-- Compiled a PRIVATE poster layout surrogate with Pandoc/XeLaTeX using numeric
-  substitutions and placeholder figure regions. It fits one A3 landscape page.
-  This tests the LaTeX layout only; it is NOT an R-knit poster or result artifact
-  and is not included as a deliverable.
+ACTUAL EXECUTION
+- Full source("check_project.R") PASSED with R4.4.3, igraph2.3.4, cluster2.1.8.
+- Inputs were reread from disk; analysis, exports, ID invariance and malformed/
+  missing annotation failure checks passed. outputs/session_info.txt is real.
+- All3 input CSVs and the original RQ2 Rmd/RQ4 PDF remain byte-identical to
+  supplied files. Annotation SHA256:
+  ec8a489ed67699def5d8cdcc9ed718eb5cfbf282a3f67f8a48e70522b702d4eb
+- RQ2: table FALSE86/69 TRUE71/52; Yates chi-square0.06366605,p0.8007927.
+  Specific52/123=42.2764%; other69/155=44.5161%; difference-2.2397pp.
+- RQ3: 264eligible,1250terms; average/cosine k2=262/2,silhouette0.01506745.
+  All primary k2-8 fail size guard. Complete259/5,silhouette-0.00199713;
+  Ward241/23,0.00249402. These are actual R outputs, not Python substitutions.
+- RQ4:198events,193directedpairs,144authors,9weakcomponents,LCC128.
+  Numeric results reproduce the teammate's principal reported outcomes.
+- Shared metadata validation passed valid/invalid fixture cases; no member
+  identity or contribution percentage was invented.
 
-Not performed / not asserted:
-- R execution: Rscript is not installed in the preparation environment.
-- R Markdown knitting of either final source.
-- Final report page count and actual R-generated figure/table layout.
-- Validation of original RQ2 manual labels, which were not supplied.
-- Historical collection completeness or use of an original R collector.
-- Marker access to a GitHub/GitLab repository, which has not been created here.
-- Human group review, which remains for the students.
+ACTUAL R MARKDOWN OUTPUT AND VISUAL REVIEW
+- Report PDF:28totalpages, including title/TOC/appendix/references.
+- Poster PDF:1A2landscape page with four live R-generated vector figures.
+- These were actually knitted with R4.4.3 and Pandoc3.1.3/XeLaTeX.
+- Source YAML retains Arial12,1.5bodyspacing,16ptheadings,1.2in side margins.
+  Arial is absent on audit host. Report preview used Nimbus Sans; poster
+  preview used DejaVu Sans. Exact Arial pagination requires a local Knit.
+- Inspected every report page in contact sheets and enlarged pages for
+  title/TOC, narrow tables, required text visuals, clustering and networks.
+  Kept20template page-start locations; clarified short table headers and
+  widened the discussion-ID column to prevent broken IDs. Captions below.
+- Report retains two text visuals, chi-square table/assumptions/effect,
+  cluster diagnostics+dendrogram+profiles, full network+LCC and2centralities.
+- Poster inspected at full-page scale: four RQs, methods, results, limitations,
+  references and repository; no clipping or overflow observed.
+- The current review PDFs include the confirmed date, sampling rationale and
+  Excel-label provenance update. They still await the user's member details
+  and actual group review; they are not final submission PDFs.
+- Actual Word conversion passed, ZIP CRC/XML valid,13tables,7centred figures
+  (via CaptionedFigure style), native3-levelTOC and cover GitHub link. An earlier
+  transient truncated Word output was discarded; fresh render and direct Pandoc
+  both succeeded. Word TOC requires Ctrl+A,F9,Update entire table in Word.
 
-Next computational check:
-Run install_packages.R, run_analysis.R and check_project.R in a fresh RStudio
-session, then knit the report and poster. Inspect the actual output and rendered
-page counts. The README explains the remaining evidence and final-mode checks.
+HISTORICAL REMOTE REPOSITORY AUDIT — COMMIT a316232
+- Read-only clone/history and HTTP200, main at
+  a316232f509d1e283f048a0e62d5ccfffa1886ba. No remote writes/pushes.
+- Remote RQ2 module was replaced by a standalone script using data/clean/,
+  breaking analyse_hypothesis() callers. Local integrated module is restored.
+- Remote lacked row labels and formatting assets. They are included here.
+- Recovered collector/cleaner/123-ID-label script preserved with hashes in
+  original_submissions/. All123TRUE IDs match the supplied annotation.
+- Repository commit timestamps do not establish original collection dates.
+- Targeted credential scan found no hits; no exhaustive security claim.
+
+NOT ESTABLISHED BY THESE CHECKS
+- Exact collection time/timezone, historical search queries and collection
+  completeness. The group has separately confirmed R collection on 28 September
+  2026; computational checks did not independently establish that date.
+- Semantic correctness of all labels, coding reliability or an agreed ambiguity
+  policy. Existing decisions are preserved, not silently recoded.
+- Independence of comments or population/causal validity of the chi-square test.
+- Actual member names/SIDs/contributions or completed human group evaluation.
+- Future marker access, successful user-machine Knit, or any guaranteed mark.
+
+NEXT: follow README and docs/FINAL_AUDIT.md, complete real group facts,
+Knit with Arial, recheck page count, then copy project contents into the existing
+repo root and upload regenerated final PDFs through the course submission link.
+
+ENGLISH DOCUMENTATION UPDATE
+- Maintained README and final audit translated to English; references updated.
+- All maintained textual files scanned for Vietnamese-specific characters.
+- Manifest source paths/limitations verified against the recovered collector.
+- Original raw/clean/annotation inputs and analytical Rmd/R functions unchanged.
+- The existing28-page report and1-page poster previews therefore remain the
+  previous actual R-knit outputs; they are not claimed to contain new group facts.
+
+SUBSEQUENT GROUP-CONFIRMED METHOD RECORD
+- Group confirms collection using R on 28 September 2026. Date only; no exact
+  clock time or timezone is inferred. Year follows the 2026 assignment context.
+- Topic selection is documented as a retrospective topical justification, not
+  as a recovered query log. Exact query/timestamp/log files are not extra
+  compulsory deliverables in the brief.
+- Group reports an Excel expression/code step for RQ2 labels; exact original
+  expression/workbook remains unavailable. Existing labels and the matching
+  123-ID script are preserved; no manual-coding/reliability claim is added.
+- Separate optional entry: collection/01_collect_new_snapshot.R. New collection
+  outputs must remain separate from the analysed frozen snapshot.
+- Earlier execution/page-count results describe their tested source revision;
+  later report/metadata changes require a fresh render and page check.
+
+ACTUAL VALIDATION AFTER THE GROUP CONFIRMATION
+- Re-ran check_project.R using actual R4.4.3 after the provenance edits: PASSED.
+- Collection validation accepts the sourced date-only record. The separately
+  delivered entry script with run_collection=FALSE made no API calls and created
+  no download folder. No historical input snapshot was replaced.
+- Re-knitted the updated report and poster: 28 report pages, 1 A2 poster page.
+  Inspected updated collection, RQ2, conclusion and poster pages: no overflow.
+- RQ2 contingency table, p-value, cluster and network results remain unchanged.
+- Maintained project documentation is English. The original source/data files
+  remain unchanged; chronology of previous audit records is preserved above.

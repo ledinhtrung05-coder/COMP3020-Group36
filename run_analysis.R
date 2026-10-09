@@ -1,4 +1,7 @@
 # Open COMP3020_Group36.Rproj, then source("run_analysis.R"). No API download.
+needed <- c("here", "cluster", "igraph")
+missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing)) stop("Run source('install_packages.R') first. Missing: ", paste(missing, collapse = ", "))
 here::i_am("run_analysis.R")
 project_root <- here::here()
 for (file in c("00_data.R", "02_text_cluster.R", "03_hypothesis.R", "04_network.R", "05_export.R")) {
@@ -9,8 +12,7 @@ comments <- read_comments(here::here("data", "processed", "hn_comments_clean.csv
 audit <- audit_comments(raw, comments)
 text_result <- analyse_text(comments)
 rq2 <- analyse_hypothesis(comments,
-  here::here("data", "annotations", "verification_labels.csv"),
-  here::here("data", "processed", "hn_comments_clean.csv"))
+  here::here("data", "annotations", "verification_labels.csv"))
 clusters <- analyse_clusters(comments, text_result)
 clusters$sensitivity <- cluster_linkage_sensitivity(clusters)
 network <- analyse_network(comments, seed = 3020)

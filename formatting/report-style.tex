@@ -1,0 +1,78 @@
+% Formatting only. The R Markdown YAML selects XeLaTeX and the Arial font.
+% Explicit packages are needed because the Lua filter emits raw longtables.
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{float}
+\floatplacement{figure}{H}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{titlesec}
+\usepackage{fvextra}
+\usepackage{xcolor}
+\definecolor{TemplateHeading}{HTML}{0F4761}
+
+\geometry{letterpaper,left=1.2in,right=1.2in,top=1in,bottom=1in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+\setlength{\LTcapwidth}{\textwidth}
+\setlength{\emergencystretch}{3em}
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\raggedbottom
+\AtBeginDocument{\setstretch{1.5}\justifying}
+
+\titleformat{\section}
+  {\normalfont\color{TemplateHeading}\fontsize{16}{24}\selectfont}
+  {\thesection.}{0.6em}{}
+\titleformat{\subsection}
+  {\normalfont\color{TemplateHeading}\fontsize{16}{24}\selectfont}
+  {\thesubsection.}{0.6em}{}
+\titleformat{\subsubsection}
+  {\normalfont\color{TemplateHeading}\fontsize{16}{24}\selectfont}
+  {\thesubsubsection.}{0.6em}{}
+\titlespacing*{\section}{0pt}{18pt}{4pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{8pt}{4pt}
+
+\captionsetup{labelfont=bf,font={normalsize,stretch=1.5},justification=centering,
+  singlelinecheck=false,position=bottom,skip=6pt}
+
+% Arial 12, with no outer indentation; meaningful spaces inside code remain.
+% Long lines wrap visually without changing the executable source code.
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+  fontsize=\normalsize,fontfamily=\rmdefault,
+  formatcom=\addfontfeatures{Ligatures=TeXOff},
+  baselinestretch=1.5,breaklines,breakanywhere,
+  breakautoindent=false,breakindent=0pt,
+  breaksymbolleft={},breaksymbolright={},
+  xleftmargin=0pt,xrightmargin=0pt,commandchars=\\\{\}}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+  fontsize=\normalsize,fontfamily=\rmdefault,
+  formatcom=\addfontfeatures{Ligatures=TeXOff},
+  baselinestretch=1.5,breaklines,breakanywhere,
+  breakautoindent=false,breakindent=0pt,
+  breaksymbolleft={},breaksymbolright={},
+  xleftmargin=0pt,xrightmargin=0pt}
+
+
+% The edited reference has a left-aligned title followed immediately by the TOC.
+% The repository is appended to the date by report-layout.lua, before the TOC.
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begingroup
+  \parindent=0pt
+  {\raggedright\setstretch{1}\fontsize{28}{34}\selectfont\@title\par}%
+  \vspace{4pt}%
+  {\raggedright\setstretch{1}\fontsize{12}{18}\selectfont\@author\par}%
+  {\raggedright\setstretch{1}\fontsize{12}{18}\selectfont\@date\par}%
+  \endgroup
+  \vspace{6pt}%
+}
+% Dotted leaders and three TOC levels, as in the supplied Word reference.
+\renewcommand*{\l@section}[2]{\begingroup\bfseries\@dottedtocline{1}{0pt}{1.5em}{{\bfseries #1}}{{\bfseries #2}}\endgroup}
+\renewcommand*{\l@subsection}[2]{\begingroup\bfseries\@dottedtocline{2}{0.1667in}{2.3em}{{\bfseries #1}}{{\bfseries #2}}\endgroup}
+\renewcommand*{\l@subsubsection}[2]{\begingroup\bfseries\@dottedtocline{3}{0.3333in}{3.2em}{{\bfseries #1}}{{\bfseries #2}}\endgroup}
+\makeatother

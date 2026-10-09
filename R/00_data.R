@@ -65,6 +65,24 @@ audit_comments <- function(raw, comments) {
        removed_exactly_dead_deleted = setequal(removed$comment_id, raw$comment_id[raw$dead | raw$deleted]))
 }
 
+collection_manifest_complete <- function(manifest, comments) {
+  # A group-confirmed calendar date is valid provenance; an exact UTC timestamp
+  # and a historical search log are not invented merely to pass this check.
+  # Retrospective relevance is kept separate from the original search history.
+  fields <- c("thread_id", "original_collection_date", "collection_date_source",
+    "original_collection_R_script", "collection_execution_status",
+    "selection_justification", "selection_justification_basis",
+    "selection_process_status", "collection_limitations")
+  if (!nrow(manifest) || !all(fields %in% names(manifest))) return(FALSE)
+  values <- as.matrix(manifest[, fields, drop = FALSE])
+  if (anyNA(values) || any(!nzchar(trimws(values)))) return(FALSE)
+  dates <- suppressWarnings(as.Date(manifest$original_collection_date, format = "%Y-%m-%d"))
+  all(!is.na(dates)) &&
+    all(format(dates, "%Y-%m-%d") == manifest$original_collection_date) &&
+    !anyDuplicated(manifest$thread_id) &&
+    setequal(manifest$thread_id, comments$thread_id)
+}
+
 write_csv_utf8 <- function(x, path) {
   dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
   write.csv(x, path, row.names = FALSE, na = "", fileEncoding = "UTF-8")

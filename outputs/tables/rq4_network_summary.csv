@@ -1,0 +1,15 @@
+"metric","value"
+"Clean comments",278
+"Authors in clean corpus",186
+"Matched reply events",198
+"Self-reply events",0
+"Between-author reply events",198
+"Network authors",144
+"Unique directed author pairs",193
+"Density",0.00937257187257187
+"Weak components",9
+"Largest weak component",128
+"Largest weak component share",0.888888888888889
+"Strong components",102
+"Largest strong component",10
+"Authors outside graph",42

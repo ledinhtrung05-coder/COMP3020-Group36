@@ -1,0 +1,7 @@
+"category","label","n_comments","total_comments","percentage"
+"reading_inspection","Reading / inspection",37,278,13.3093525179856
+"execution_testing","Execution / testing",65,278,23.3812949640288
+"static_type","Static / type checks",7,278,2.51798561151079
+"formal_verification","Formal verification",2,278,0.719424460431655
+"responsibility_ownership","Responsibility / ownership",28,278,10.0719424460432
+"understanding_trust","Understanding / trust",34,278,12.2302158273381

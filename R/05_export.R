@@ -13,6 +13,8 @@ export_results <- function(results, project_root) {
   save_table(results$text$document_summary, "text_document_summary")
   save_table(data.frame(word = results$text$stopwords), "stopwords_used")
   save_table(results$rq2$rates, "rq2_reply_rates")
+  save_table(results$rq2$joined, "rq2_joined_annotations")
+  save_table(results$rq2$by_thread, "rq2_reply_rates_by_thread")
   save_table(data.frame(chi_square = unname(results$rq2$test$statistic),
     df = unname(results$rq2$test$parameter), p_value = results$rq2$test$p.value,
     difference_percentage_points = results$rq2$difference_pp,
@@ -56,5 +58,6 @@ save_project_figures <- function(results, project_root) {
   draw("rq3_thread_composition", function() plot_cluster_thread(results$clusters))
   draw("rq4_full_network", function() plot_network_full(results$network), height = 6)
   draw("rq4_largest_component", function() plot_network_lcc(results$network), height = 6)
+  draw("rq4_indegree_distribution", function() plot_indegree_distribution(results$network))
   invisible(dest)
 }

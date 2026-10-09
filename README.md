@@ -1,114 +1,156 @@
-# COMP3020 Group 36 — integrated review project
+# COMP3020 Group 36 — Social Web Analytics project
 
-This project preserves the supplied raw/clean snapshots and original RQ2/RQ4 submissions. It adds the text analysis, clustering, a reproducible network implementation, connected interpretation, research references and an optional one-page poster source. It is a **review build**, not a claim that all submission prerequisites are complete.
+**Responsibility and verification of AI-generated code in online discussions**
 
-## Bắt đầu trên máy Windows/RStudio
+This project connects four research questions through text analysis, hypothesis testing, clustering and a directed reply network. It preserves the supplied raw and clean datasets, comment-level RQ2 labels and original group submissions. The report and one-page poster use the same analytical functions and group metadata.
 
-1. Giải nén **toàn bộ** thư mục. Không mở Rmd trực tiếp bên trong ZIP. Bạn có thể lưu thư mục ở bất kỳ đâu.
-2. Mở `COMP3020_Group36.Rproj`. Không tự sửa đường dẫn sang `C:/Users/...`.
-3. Chọn **Session > Restart R** để kiểm tra trong phiên mới.
-4. Trong Console, chạy một lần:
+Repository: https://github.com/ledinhtrung05-coder/COMP3020-Group36
+
+## Verified status and remaining group information
+
+The full `source("check_project.R")` workflow passed on **R 4.4.3**, with igraph 2.3.4 and cluster 2.1.8. The report and poster were actually knitted: **28 report pages** and **one A2 landscape poster page**. Word conversion also passed. The actual package environment is recorded in `outputs/session_info.txt`; detailed checks and limitations are in `docs/VALIDATION.txt` and `docs/FINAL_AUDIT.md`.
+
+Arial was unavailable on the audit machine, so the report preview used Nimbus Sans and the poster preview used DejaVu Sans. The delivered Rmd sources still request **Arial**. The PDFs in `audit_previews/` are review copies, not final submission files. Complete the group information below, knit again on the submission machine and recheck pagination and layout.
+
+The group has confirmed that it collected the data using R on **28 September 2026**. This records a calendar date only; no exact time or timezone has been supplied. The year follows the 2026 assignment context. The group also reports using an Excel expression/code step for the RQ2 labels; the exact original expression or workbook has not been supplied. The existing 123-ID implementation and supplied labels remain unchanged.
+
+The remaining group actions are to enter member names, student IDs and actual contribution percentages, review the methods/results, and, if available, provide the original Excel expression or workbook so the label-generation procedure can be checked. A coder timestamp or independent-coding study is not an extra compulsory deliverable. Successful computations do not establish label validity or guarantee a mark. See [the collection and label guide](docs/COLLECTION_AND_LABELS_GUIDE.md) for the exact update locations.
+
+## Run the project in Windows and RStudio
+
+1. Extract the **entire ZIP**. Do not open an Rmd directly inside the ZIP.
+2. Open `COMP3020_Group36.Rproj`. Keep the folder structure intact; do not replace shared paths with personal `C:/Users/...` paths.
+3. Select **Session > Restart R** to begin in a fresh session.
+4. Install the required packages once, or rerun this step if packages are missing:
 
 ```r
 source("install_packages.R")
 ```
 
-5. Chạy phân tích và các kiểm tra:
+5. Run the analysis and supplied-snapshot checks:
 
 ```r
-source("run_analysis.R")
 source("check_project.R")
 ```
 
-6. Mở `Report_Group36_Integrated.Rmd`, chọn **Knit > Knit to PDF**. Hoặc chạy:
+This command reloads inputs from disk and reruns the analysis, avoiding stale RStudio objects. Running `run_analysis.R` separately beforehand is unnecessary. No API download occurs during analysis or knitting.
+
+6. Render the report and poster:
 
 ```r
 rmarkdown::render("Report_Group36_Integrated.Rmd", output_format = "pdf_document")
+rmarkdown::render("Poster_Group36.Rmd", output_format = "pdf_document")
 ```
 
-7. Nếu lỗi chỉ liên quan LaTeX, kiểm tra nội dung bằng HTML trước:
+Alternatively, open each Rmd and select **Knit > Knit to PDF**. PDF output uses XeLaTeX. Use an existing working TinyTeX installation; install it only if needed, following the comments in `install_packages.R`.
+
+For a Word report:
+
+```r
+rmarkdown::render("Report_Group36_Integrated.Rmd", output_format = "word_document")
+```
+
+After opening the result in Microsoft Word, press **Ctrl+A > F9 > Update entire table** to populate or refresh the table of contents and page numbers. Some viewers show only the TOC heading until this field is updated. The PDF contents page is compiled automatically. Do not copy fixed page numbers from an earlier document.
+
+If a LaTeX issue prevents PDF output, inspect the report content through HTML while resolving the issue:
 
 ```r
 rmarkdown::render("Report_Group36_Integrated.Rmd", output_format = "html_document")
 ```
 
-HTML là bản kiểm tra, không thay thế PDF phải nộp. Nếu máy báo thiếu LaTeX, dùng TinyTeX đã có của bạn; chỉ cài lại khi cần. File `install_packages.R` có lệnh cài một lần. PDF dùng XeLaTeX để xử lý UTF-8. Sau khi knit, kiểm tra bảng/hình có bị tràn và tổng số trang nằm trong giới hạn môn (subject outline nêu 10–30; instructions nêu tối đa 30).
+HTML is a diagnostic view, not a substitute for the required submission PDF. If `Missing: igraph` appears, rerun `source("install_packages.R")`, then check `packageVersion("igraph")` before repeating the project checks. Preserve any installation error message rather than removing the package checks. A missing package does not mean the RQ2 data are missing.
 
-## Những gì được tính và xuất
+The formatting was tested with Pandoc 3.1.3. Check the local version with `rmarkdown::pandoc_version()`. A missing `pandoc.zip` message concerns the Word-export tooling; update RStudio/Pandoc if necessary.
 
-- `outputs/tables/`: audit, từ thường gặp, dictionary và từng match, RQ2 với nguồn gốc số liệu, cụm/diagnostics/examples, mạng/centrality, liên hệ cụm–reply.
-- `outputs/figures/`: hình PDF vector để dùng trong poster.
-- `outputs/session_info.txt`: phiên bản R, hệ điều hành và package.
-- `outputs/analysis_results.rds`: kết quả cho kiểm tra nội bộ (không cần commit).
+## Shared group details
 
-Không tải API khi knit. Thay đổi dữ liệu có thể làm thay đổi mọi kết quả; không chỉnh CSV nền riêng lẻ giữa các thành viên.
+Complete `docs/group_contributions.csv` once with each member's `member_name`, `student_id`, `contribution_percent` and `actual_contribution`. Contribution percentages must be numeric and sum to **100**. Record actual work; do not infer contributions from commit counts or assign equal shares without group agreement.
 
-## RQ2: bổ sung đúng file nhãn
+The report and poster read this same file, preventing inconsistent names, IDs or percentages. Complete the remaining review fields as appropriate rather than maintaining separate rosters in multiple files.
 
-Hiện chỉ có số đếm trong bài thành viên, chưa có nhãn từng bình luận. Mặc định chương trình tái tính đúng bảng thành viên đã báo cáo và ghi rõ nguồn gốc. Nó **không tự tạo** `verification_specific` từ từ khoá.
+The collection manifest records the group-confirmed date, archived collector path, topic scope and observable limitations. The topical rationale in `docs/COLLECTION_AND_LABELS_GUIDE.md` is a **retrospective justification** based on the project direction, five discussion titles and literature; it is not a recovered historical search log. Exact search queries were not recorded and are not an expressly required separate submission. The original scripts remain archived unchanged. Review the intended RQ2 definition in `docs/CODEBOOK.md`; provide the original Excel expression/workbook if available, rather than inventing missing formula details.
 
-Khi thành viên gửi file đã gắn TRUE/FALSE:
+Set `group_review_confirmed` and `final_mode` only after completing the corresponding review and required information. Every member should be able to explain the whole investigation; `docs/QA_PREPARATION.md` provides discussion prompts.
 
-1. Giữ ít nhất hai cột `comment_id`, `verification_specific`.
-2. Đảm bảo đúng 278 ID của snapshot hiện tại, mỗi ID một dòng, không thiếu nhãn.
-3. Lưu thành `data/annotations/verification_labels.csv`, UTF-8.
-4. Ghi quy tắc và nguồn gốc nhãn trong `docs/CODEBOOK.md`.
-5. Chạy lại phân tích. Chương trình sẽ dùng nhãn thực, không dùng bảng cũ.
+## Report and poster presentation
 
-`verification_labels_TEMPLATE.csv` chỉ là mẫu **trống**. Không đổi các ô trống thành FALSE. Nếu file thành viên đã có đủ cột, có thể trích xuất như sau sau khi kiểm tra tên file:
+Keep the complete `formatting/` directory. The Rmd files depend on its Word reference, PDF styles and caption/page-break rules.
 
-```r
-member_data <- read.csv("DUONG_DAN_FILE_THANH_VIEN.csv", colClasses = "character")
-write.csv(member_data[c("comment_id", "verification_specific")],
-          here::here("data", "annotations", "verification_labels.csv"),
-          row.names = FALSE, fileEncoding = "UTF-8")
-```
+The report requests Arial 12, 1.5 body line spacing, 16-point headings, justified prose, Letter paper, **1.2-inch left/right margins** and 1-inch top/bottom margins. Tables and figures are centred with captions below. Code has no outer block indentation; meaningful indentation inside code is preserved.
 
-Đây là bước chuyển đúng nhãn thành viên, không phải phương pháp mã hóa mới. Kiểm tra đường dẫn nguồn tại máy bạn; không đưa đường dẫn cá nhân đó vào phân tích dùng chung.
+The report retains the three-level TOC, title-page GitHub link, the **Research question** section containing RQ1–RQ4, and the 20 agreed page-start locations from the edited Word reference. Table proportions follow the reference, with widths constrained to the text area. See `docs/FORMATTING_MAP.md` for details. The report must remain within the **30-page maximum**; the subject outline gives a 10–30-page range. Recheck the complete PDF after any change to content, fonts, member details or data.
 
-Ngay cả sau khi có nhãn, kiểm định vẫn có hạn chế về phụ thuộc bình luận/tác giả. Không viết p lớn nghĩa là “không có ảnh hưởng”.
+The poster uses **one A2 landscape page with four columns**. `Poster_Group36.Rmd` shares the report's computations and uses vector figures from `outputs/figures/`; retain `formatting/poster-style.tex`. Check text, figure labels, captions, references and member details at the intended display size. Keep editable sources and the final PDF consistent.
 
-## Thông tin cần hoàn tất trước nộp
+Interpretation must remain consistent across both outputs: the RQ2 test did not provide evidence of association under its assumptions; it did not prove no association. RQ3 produced weak, unbalanced lexical partitions. The network contains 144 authors participating in retained edges, whereas the corpus contains 186 authors in total.
 
-- Điền tên và student ID của mọi thành viên, link repo trong YAML `params` của Rmd.
-- Hoàn thiện `data/collection_manifest.csv`: thời gian thu thập thực, lý do chọn từng luồng, code R thu thập thực tế và giới hạn.
-- Cập nhật `params$collection_note` theo bằng chứng thật. Không nhận code bổ sung mới là code đã được dùng trong quá khứ.
-- Nhận nhãn RQ2 và xác nhận codebook.
-- Nhóm chạy, đọc và chỉnh diễn giải; điền `docs/group_contributions.csv`.
-- Khi đã hoàn tất, đặt `group_review_confirmed: true`, rồi `final_mode: true`. Chế độ final chủ động báo lỗi nếu các thông tin thiết yếu vẫn thiếu. Đây là kiểm tra hoàn thiện đầu vào, không chứng nhận điểm số hay tính hợp lệ của mọi quyết định.
-- Rà poster: một trang PDF; kết quả phải nhất quán report.
-- Kiểm tra người chấm mở được repo; link repo nằm trong report; nộp các PDF theo Ultra.
+## Inputs, outputs and RQ2 traceability
 
-Chính sách trong subject outline cho phép AI hỗ trợ nhưng yêu cầu nhóm đánh giá, điều chỉnh và hiểu bài. Bản này ghi đúng phần hỗ trợ; nhóm cần phản biện kết quả và chuẩn bị Q&A toàn bộ nghiên cứu.
+The supplied `hn_comments_clean(after add true false).csv` is preserved byte-for-byte under the portable filename `data/annotations/verification_labels.csv`. It contains **278 comments and 14 columns**, including **123 TRUE and 155 FALSE** values of `verification_specific`. The 13 original columns match the frozen clean dataset. The raw and clean input snapshots remain unchanged.
 
-## Poster
+No relabelling, column extraction or additional label file is needed when using the complete package. The analysis joins on `comment_id`, validates shared fields and recomputes `received_reply` from retained parent–child relationships. Missing or mismatched annotation input stops execution; there is no fallback to the old aggregate table.
 
-Sau khi report chạy, mở `Poster_Group36.Rmd` và knit PDF. Poster dùng lại cùng code/snapshot và luôn ghi RQ2 đang dùng nhãn hay bảng tổng hợp. Mặc định có nhãn **REVIEW DRAFT**. Điền thông tin thành viên/repo và xác nhận sau khi nhóm kiểm tra. Kiểm tra thực tế chỉ có một trang; source dùng A3 landscape và ba cột, không cần cài gói poster chuyên dụng.
+| `verification_specific` | No retained direct reply | Retained direct reply | Total |
+|---|---:|---:|---:|
+| FALSE | 86 | 69 | 155 |
+| TRUE | 71 | 52 | 123 |
 
-## GitHub: cách phối hợp vừa đủ
+Actual R output gives Yates-corrected chi-square approximately 0.063666 and **p = 0.8007927**. Reply rates are 42.2764% for TRUE and 44.5161% for FALSE, a difference of −2.2397 percentage points. The by-thread table describes composition; it adds no further test and does not resolve comment/author dependence.
 
-Một người phụ trách ghép project; thành viên RQ2/RQ4 tiếp tục phụ trách nội dung của mình. Mỗi người làm trên một nhánh (`rq2`, `rq4`, `integration`), commit thay đổi nhỏ có mô tả, rồi mở pull request. Người tích hợp kiểm tra và ghép vào `main`. Tránh hai người cùng sửa report chính hoặc dữ liệu nền một lúc.
+The recovered original script, `original_submissions/repo_03_hypothesis_labeling_a316232.R`, assigns TRUE to 123 listed IDs and FALSE to the remainder. Its ID list exactly matches the supplied labels. The intended definition is a mention of a specific way to check or test AI-generated code. The group reports an Excel expression/code step, but its exact original expression/workbook is unavailable. Neither a hard-coded ID list nor matching counts reconstructs that expression or establishes the semantic correctness of every label. The most useful additional evidence is the original Excel expression or workbook, with its handling of quotations and ambiguous cases. This is a measurement-validity check, not a new compulsory separate submission. If a justified review changes a label, preserve the original version, record the reason, update the relevant snapshot checks and rerun all affected outputs.
 
-Commit dữ liệu dùng trong bài, các script/Rmd, references, README và tài liệu quyết định. Không commit token, `.Renviron`, `.RData`, thư viện package hoặc cache. Nếu dùng `renv`, giữ `renv.lock`, `.Rprofile` khởi tạo và `renv/activate.R`; không bỏ qua toàn bộ thư mục `renv`.
+Generated outputs are:
 
-README và các script giúp tái lập; lần chạy đầu trên máy nhóm cần tạo `session_info.txt`. Sau khi chạy tốt, có thể chốt package bằng `renv::init()`/`renv::snapshot()`; người khác dùng `renv::restore()`. Không tự nhận một lockfile chưa chạy là môi trường đã kiểm chứng.
+- `outputs/tables/`: data audits, word frequencies, dictionary matches, RQ2 results and thread summaries, cluster diagnostics/examples, network metrics and the cluster–reply link.
+- `outputs/figures/`: vector PDF figures for the report and poster.
+- `outputs/session_info.txt`: actual R, operating-system and package versions.
+- `outputs/analysis_results.rds`: an internal results object, excluded from Git.
 
-Repo có thể private nếu người chấm được cấp quyền; đề yêu cầu truy cập được, không bắt buộc công khai. Một thành viên khác nên clone repo vào thư mục mới và chạy theo README trước nộp.
+Changes to shared input data can affect every analysis. Coordinate dataset changes rather than maintaining separate member-specific copies.
 
-## Code thu thập/làm sạch bổ sung
+## Archived scripts and optional recollection
 
-`R/01_collect_hn.R` và `R/01_rebuild_clean.R` là triển khai mới để có thể thu thập bằng R với log. Chúng không được chạy tự động và không ghi đè bản gốc.
+Three original scripts recovered from the repository are preserved unchanged in `original_submissions/`. Its `REPO_SOURCE_PROVENANCE.md` records the audited commit, source paths and SHA-256 hashes. The collector uses R/jsonlite to traverse `kids` for the five discussions; the cleaner removes dead/deleted records, processes HTML and derives `received_reply`; the RQ2 script applies the recorded TRUE-ID list.
+
+**Do not source these archived scripts during the integrated analysis.** They contain immediate file reads/writes and historical `data/clean/` paths. They are retained for attribution and inspection. The group subsequently confirmed R collection on 28 September 2026. That confirmation does not establish an exact execution time, exhaustive collection or an undocumented search procedure.
+
+The separate entry file is **`collection/01_collect_new_snapshot.R`**. It calls the supplementary collector in `R/01_collect_hn.R`; `R/01_rebuild_clean.R` remains a separate supplementary cleaner. These are prospective implementations, not replacements for the archived historical scripts.
+
+To inspect or deliberately run a new collection:
+
+1. Open the `.Rproj`, then open `collection/01_collect_new_snapshot.R`.
+2. Read and edit only the clearly marked **EDIT** settings, including the discussion IDs and a new output destination when required. Follow `docs/COLLECTION_AND_LABELS_GUIDE.md` for the exact fields.
+3. Save the entry file. Only when you intend to download a **new snapshot**, run:
 
 ```r
-source(here::here("R", "01_collect_hn.R"))
-ids <- unique(read.csv(here::here("data", "collection_manifest.csv"),
-                      colClasses = "character")$thread_id)
-# Only run when the group deliberately wants a NEW snapshot:
-# collect_hn(ids, here::here("data", "new_downloads", "snapshot_NEW"))
+source("collection/01_collect_new_snapshot.R")
 ```
 
-Để tái lập phân tích trong report, dùng snapshot đi kèm. Để chứng minh quá trình thu thập gốc đáp ứng bài, cần code/log thực tế của nhóm. Một lần tải mới không khôi phục được nội dung đã xóa hoặc chứng minh trạng thái quá khứ.
+The entry file does not run during Knit. Keep its new output separate from `data/raw/`, `data/processed/` and `data/annotations/`; do not overwrite the analysed snapshot. **Do not run this collection step merely to reproduce the existing report.**
 
-## Trạng thái kiểm tra lúc bàn giao
+Use the supplied frozen inputs to reproduce the report. A fresh API download may change the comment count and cannot reconstruct previously deleted content.
 
-Đã audit CSV, kiểm tra độc lập số học RQ2, dựng lại số liệu mạng và khảo sát text/clustering bằng Python; đã rà tĩnh code R và kết nối giữa các file. **Môi trường soạn bản này không có Rscript, nên chưa chạy R, knit PDF hoặc xác nhận số trang.** Các kết quả trong report sẽ lấy từ R khi bạn chạy. Python/R có thể xử lý các khoảng cách bằng nhau trong hierarchical clustering khác nhau; không chép kết quả Python vào Rmd như thể đã chạy R.
+## Repository audit and update procedure
+
+The read-only audit inspected `main` at commit `a316232f509d1e283f048a0e62d5ccfffa1886ba`, dated **9 October 2026, 21:15:57 Sydney time**. At that point the URL returned HTTP 200 without sign-in, and cloning/history inspection succeeded. These findings apply to that pinned historical commit, not to later uploads. No remote writes or pushes were made during the audit.
+
+That historical version lacked the real annotation file and formatting assets, contained an older report, and placed a standalone RQ2 script where callers expected `analyse_hypothesis()`. The integrated package keeps the function module in `R/` and the original script in `original_submissions/`. Do not overwrite `R/03_hypothesis.R` with the standalone original.
+
+For a new package update:
+
+1. Extract it into a temporary folder and confirm that the `.Rproj`, Rmd files, `R/`, `collection/`, `data/`, `formatting/` and `docs/` are present.
+2. Copy the **contents inside the project folder** into the **existing repository root**, replacing corresponding files while preserving `.git/`. Avoid creating a nested `COMP3020-Group36/COMP3020_Group36/` project.
+3. Remove the superseded `docs/FINAL_AUDIT_VI.md` if it remains from an earlier upload; the English replacement is `docs/FINAL_AUDIT.md`. Keep `data/annotations/verification_labels.csv`. An old blank `verification_labels_TEMPLATE.csv` is not analytical data. If the historical `R/01_clean_hn.R` remains, do not source it in the integrated workflow; its preserved copy belongs in `original_submissions/`.
+4. Open the `.Rproj`, run `source("check_project.R")`, then knit and inspect both PDFs. Recollection is unnecessary.
+5. Include the checked final report and poster PDFs with their sources, data, references and session information. Replace any outdated `docs/group36_poster.pdf` with the matching final poster rather than leaving conflicting versions. `audit_previews/` is ignored by Git and does not replace submission PDFs.
+6. Review the changes in GitHub Desktop or RStudio's Git tab, commit and push. Preserve repository history. After pushing, check the exact files in a private/incognito browser window and confirm that they match the submitted PDFs.
+
+For group work, assign an integration owner and use small, descriptive commits on branches such as `rq2`, `rq4` and `integration`. Review changes before merging into `main`; avoid simultaneous edits to the main report or frozen inputs.
+
+Commit the required data, scripts, Rmd files, references, documentation and final outputs. Do not commit tokens, `.Renviron`, `.RData`, package libraries or caches. If adopting `renv` after a successful run, retain `renv.lock`, its initialisation `.Rprofile` and `renv/activate.R`; other members can then use `renv::restore()`.
+
+Have another member clone into a fresh folder and run the README instructions. The marker must be able to access the repository; if it is private, explicitly grant and verify access. Before submission, confirm the final report page limit, one-page poster, group details, repository version and required course submission files.
+
+## Language and method-record revision
+
+All maintained project instructions and documentation are in English. Original research texts, author names and archived group submissions remain unchanged. The English audit is `docs/FINAL_AUDIT.md`. The collection manifest now records the group-confirmed R collection date of 28 September 2026 without inventing a time or timezone. The collection guide separates retrospective topical justification from unrecorded historical search steps. The annotation codebook distinguishes the supplied labels and 123-ID implementation from the group-reported Excel step whose exact expression is not yet available.

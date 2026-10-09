@@ -1,0 +1,2 @@
+"chi_square","df","p_value","difference_percentage_points","row_labels_available","provenance"
+0.063666054853913,1,0.800792700481287,-2.23970626803042,TRUE,"The group reports creating the supplied labels using code in Excel. Labels are preserved, joined by comment_id and exactly match the recovered 123-ID R script. The original Excel workbook and exact rule have not been inspected; no validated manual coding or completed human review is claimed."

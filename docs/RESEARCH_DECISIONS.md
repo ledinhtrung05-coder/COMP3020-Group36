@@ -24,12 +24,17 @@ The subject outline's generic allocated-topic/group-size wording differs from th
 
 - Preserve title, overall question, RQ1/RQ3 intent and four-method architecture.
 - Adopt teammate's completed RQ2 in place of the older proposed paired thread-proportions comparison; document the change.
-- Preserve the RQ2 table/test as a provenance-labelled reconstruction until original annotations arrive. Never infer replacement labels to reproduce its p-value.
+- Recalculate RQ2 from the subsequently supplied 278 comment-level labels, preserving every label. The row-level table confirms the teammate's counts and test; it supersedes the earlier aggregate reconstruction. Keep the complete supplied CSV under a portable filename and require it at runtime. Never infer replacement labels to reproduce a p-value.
+- Describe RQ2 counts by thread to expose sample composition; do not add significance tests or claim that this resolves conversation dependence.
 - Reconstruct RQ4 code because only its PDF was provided; retain original PDF and match its numerical definitions.
 - Add the original cluster-to-reply connection at comment level.
 - Keep a failed/weak clustering result visible rather than fabricate substantive themes.
-- Distinguish supplied historical data from newly provided optional collection code.
+- Distinguish the frozen historical data, group-repository original collector/cleaner/ID-labeling scripts recovered at commit a316232, and newly provided optional collection code. Archive originals unchanged; do not claim commit times are collection times.
 
 ## Research vs implementation status
 
-The report source is fully connected to executable R functions. No R runtime was available during preparation. Independent Python checks support the numerical audit and the expectation of weak lexical clustering; actual R output and rendered-page checks remain for the group's run. Unknown collection history and missing annotations remain explicit. No full-marks guarantee follows from a design or template.
+The report and poster use the same executable R functions and common group metadata. R 4.4.3 became available for the final audit; the actual executed checks, render outcomes and page counts are recorded in VALIDATION.txt rather than inferred from static review. Independent data checks confirm the supplied fields and RQ2 counts; the recovered teammate ID list gives the same labels. The group has now confirmed collection using R on 28 September 2026; the calendar date is recorded without an invented time or timezone. The five-thread topical rationale is retrospective and does not reconstruct unrecorded search queries. The group reports an Excel expression/code step for labels, but its exact expression/workbook is not yet available; the supplied labels and matching 123-ID implementation remain the verifiable inputs. No full-marks guarantee follows from a design or template.
+
+## Subsequent collection and label-method clarification
+
+The date and use of R are group-reported facts. The topic-selection explanation in `docs/COLLECTION_AND_LABELS_GUIDE.md` uses the previously agreed project direction, the five thread titles and relevant literature as a retrospective justification, not as evidence of exact historical selection steps. An optional new collection is isolated in `collection/01_collect_new_snapshot.R`; it cannot prove or recreate the past snapshot. The label-method clarification does not assert independent manual coding, a formula we have not seen, or completed reliability assessment.
