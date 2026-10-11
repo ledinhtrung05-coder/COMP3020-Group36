@@ -1,6 +1,11 @@
 % Formatting only. The R Markdown YAML selects XeLaTeX and the Arial font.
 % Explicit packages are needed because the Lua filter emits raw longtables.
 \usepackage{longtable,booktabs,array,calc}
+% Raw tables emitted by the Lua filter may bypass Pandoc's counter declaration.
+% Only genuinely captionless tables use this dummy counter.
+\makeatletter
+\@ifundefined{c@none}{\newcounter{none}}{}
+\makeatother
 \usepackage{float}
 \floatplacement{figure}{H}
 \usepackage{caption}
@@ -76,3 +81,5 @@
 \renewcommand*{\l@subsection}[2]{\begingroup\bfseries\@dottedtocline{2}{0.1667in}{2.3em}{{\bfseries #1}}{{\bfseries #2}}\endgroup}
 \renewcommand*{\l@subsubsection}[2]{\begingroup\bfseries\@dottedtocline{3}{0.3333in}{3.2em}{{\bfseries #1}}{{\bfseries #2}}\endgroup}
 \makeatother
+\let\OriginalTableOfContents\tableofcontents
+\renewcommand{\tableofcontents}{\clearpage\OriginalTableOfContents}

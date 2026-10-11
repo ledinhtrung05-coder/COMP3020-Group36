@@ -66,4 +66,41 @@ check_annotation_inputs <- function() {
 check_annotation_inputs()
 manifest <- read.csv(here::here("data", "collection_manifest.csv"), colClasses = "character")
 stopifnot(!collection_manifest_complete(manifest[FALSE, , drop = FALSE], comments))
+# New sensitivities preserve full outcomes and remain invariant to input order.
+stopifnot(nrow(results$rq2$sensitivity$earliest_comments) == 186L,
+  !anyDuplicated(results$rq2$sensitivity$earliest_comments$author),
+  identical(results$rq2$sensitivity$earliest_comments$received_reply,
+    results$rq2$sensitivity$earliest_comments$comment_id %in% comments$parent_id),
+  close_enough(results$rq2$sensitivity$summary$difference_pp[2], 100 * (42/87 - 47/99)),
+  nrow(results$rq2$sensitivity$leave_one_thread_out) == 5L,
+  nrow(results$clusters$representation_sensitivity) == 4L,
+  close_enough(results$clusters$settings$selected_mean_silhouette, 0.01506745, 1e-6),
+  all(results$context_examples$evidence_match),
+  setequal(results$context_examples$thread_id, comments$thread_id),
+  nrow(results$context_reply_links) == 19L,
+  results$label_sensitivity$n_reviewed == 278L,
+  results$label_sensitivity$n_ambiguous == 5L,
+  results$label_sensitivity$n_differences == 14L,
+  close_enough(results$label_sensitivity$summary$difference_pp[2], 1.0829741379))
+reversed <- comments[nrow(comments):1L, ]
+reversed_rq2 <- analyse_hypothesis(reversed,
+  here::here("data", "annotations", "verification_labels.csv"))
+stopifnot(identical(reversed_rq2$sensitivity$summary, results$rq2$sensitivity$summary),
+          identical(reversed_rq2$sensitivity$earliest_comments,
+                    results$rq2$sensitivity$earliest_comments))
+reversed_ai <- analyse_annotation_sensitivity(reversed, reversed_rq2,
+  here::here("data", "annotations", "verification_audit_AI_SENS_v1.csv"))
+stopifnot(identical(reversed_ai$summary, results$label_sensitivity$summary))
+# Corrupted evidence must not silently pass as a traced semantic reading.
+check_audit_evidence <- function() {
+  p <- tempfile(fileext = ".csv")
+  on.exit(unlink(p), add = TRUE)
+  a <- read.csv(here::here("data", "annotations", "verification_audit_AI_SENS_v1.csv"),
+    colClasses = "character", stringsAsFactors = FALSE)
+  a$evidence[1] <- "DELIBERATELY ABSENT EVIDENCE FOR INPUT CHECK"
+  write_csv_utf8(a, p)
+  stopifnot(inherits(try(analyse_annotation_sensitivity(comments, results$rq2, p),
+                       silent = TRUE), "try-error"))
+}
+check_audit_evidence()
 message("Supplied-snapshot regression checks passed. This does not validate annotation judgements or causal/statistical assumptions.")

@@ -1,0 +1,29 @@
+{
+  "audit_rule_version": "AI-SENS-v1",
+  "reviewer_type": "AI-assisted full-text review",
+  "frozen_at_utc": "2026-10-09T14:10:58.909139+00:00",
+  "expected_comment_count": 278,
+  "actual_comment_count": 278,
+  "unique_comment_count": 278,
+  "expected_ID_set_matches": true,
+  "full_text_inspected_count": 278,
+  "evidence_exact_substring_count": 278,
+  "annotation_sha256": "bc98b31fedb90e9a1af4d482203c2c7f210098795b7d32a762f908132f820d49",
+  "rule_sha256": "86cda5a29b197b6ccca7ee8cf8a3f9ab0c25e5a7584ebe898697a62c14507264",
+  "blinded_view_sha256": "46e9e639785f1f004a45d165f93770d641a39c851e7118976ebf51a8ad992992",
+  "label_counts": {
+    "TRUE": 128,
+    "FALSE": 145,
+    "AMBIGUOUS": 5
+  },
+  "fields_available_in_review_view": [
+    "comment_id",
+    "thread_id",
+    "thread_title",
+    "text"
+  ],
+  "original_annotation_file_opened_by_reviewer": false,
+  "received_reply_values_opened_by_reviewer": false,
+  "prior_context_exposure": "Before the prospective rule was frozen, the reviewer read the existing codebook and inherited context, which contained original aggregate label counts and several labelled boundary examples. The extracted review view concealed label and reply values; this is not a strictly independent blinded coding study.",
+  "interpretation": "AI-assisted sensitivity annotation, not replacement labels, reconstructed Excel provenance, human validation, gold standard or inter-rater reliability."
+}

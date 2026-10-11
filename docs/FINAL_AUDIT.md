@@ -1,5 +1,6 @@
 # Final audit and handover — COMP3020 Group 36
 
+**Revision note:** This document preserves the preceding audit and baseline results. Subsequent methodological improvements are documented in `docs/CRITERIA_AND_IMPROVEMENTS.md`; the latest execution and pagination evidence is in `docs/VALIDATION.txt`. Original numerical results and limitations below remain distinguishable from the new sensitivity analyses.
 Audit date: 9 October 2026. This document records the checks, integration decisions and information the group still needs to confirm. It does not promise a grade or certify work that has not been performed. Repository findings are tied to the audited commit and must not be treated as the current state after a later upload.
 
 ## 1. Overall assessment
@@ -42,8 +43,8 @@ Authoritative sources: `COMP3020_Assignment_2026(1)(1).pdf`, pages 1–3; `COMP3
 | Clustering representation, distance, k, visualisation and characteristics | RQ3, `R/02_text_cluster.R`, diagnostics, profiles, examples and sensitivity | Covered; the weak primary result must remain a weak result |
 | Data-derived network; full graph and justified subgraph; at least two centralities | RQ4, `R/04_network.R`, full graph/LCC, in-degree and betweenness | Definitions and analysis are present; retained-edge and missing-parent boundaries remain explicit |
 | Report PDF from R Markdown, at most 30 pages; poster PDF, one page | The two Rmd files and `formatting/` | The verified rendering was 28 report pages and one poster page; recheck after later edits and on the target fonts |
-| Cover: group number, names, student IDs and contribution percentages totalling 100 | `docs/group_contributions.csv` and `R/06_metadata.R` | Enter actual details; do not assume equal shares or invent identities |
-| Accessible repository containing data, code and reproduction instructions | Cover URL, `README.md` and project files | The earlier audited commit had integration defects. Later uploads require a fresh commit-specific check |
+| Cover: group number, names, student IDs and contribution percentages totalling 100 | `docs/group_contributions.csv` and `R/06_metadata.R` | Names and IDs from group-authored GitHub YAML now populate the shared CSV; actual roles and percentages remain blank for the group |
+| Accessible repository containing data, code and reproduction instructions | Cover URL, `README.md` and project files | Fresh commit b8b2702 resolves the old module/data/formatting defects; all 29 result CSVs match. Replace the stale poster PDF and complete contribution metadata |
 | Individual Q&A: methods 4, results 3, critical response 3 marks | `docs/QA_PREPARATION.md` | Every member should understand the entire project and attend the approximately ten-minute Week 14 discussion |
 
 The poster is the main communication assessed for the **20 group marks**, with the report as supporting evidence. The supplied documents do not give detailed HD band descriptors. Completing a checklist therefore cannot guarantee an HD. The stated deadline is **9 October 2026, 11:59 pm**, subject to any separately granted extension.
@@ -88,7 +89,7 @@ An earlier read-only inspection covered `main` at **`a316232f509d1e283f048a0e62d
 
 ## 6. Information requiring the group's confirmation
 
-- Complete `docs/group_contributions.csv`: `member_name`, `student_id`, `contribution_percent`, `actual_contribution`, `sections_reviewed`, `review_date` and `notes`. Actual percentages must total 100. `R/06_metadata.R` reads and checks the shared information for the report and poster. Do not claim unperformed contributions.
+- Verify the names and IDs already populated in `docs/group_contributions.csv` from the group-authored repository YAML, then complete `contribution_percent`, `actual_contribution` and applicable review fields. Actual percentages must total 100. `R/06_metadata.R` reads and checks the shared information for the report and poster. Do not claim unperformed contributions.
 - The group has confirmed collection using R on 28 September 2026. The manifest records that date without an invented time/timezone. Review the retrospective topical rationale and limitations in `docs/COLLECTION_AND_LABELS_GUIDE.md`; they do not claim to recover exact historical queries. A new download cannot reconstruct or prove the historical snapshot.
 - The intended RQ2 definition and matching 123-ID implementation are recorded. The group reports an Excel expression/code step; providing the original expression or workbook, if available, would allow that generation procedure and ambiguous cases to be checked. Do not invent an expression or independently validated manual coding. A coder timestamp/log or reliability study is not a separate compulsory deliverable. Document justified label changes and rerun affected analyses.
 - Read and revise the actual results before confirming `group_review_confirmed`. AI support is permitted, but the submitted analysis must reflect the group's critical evaluation and understanding.
@@ -122,4 +123,18 @@ This audit accompanies the project for the group's review. It need not be copied
 
 ## Subsequent group clarification
 
-R collection on 28 September 2026 is now group-confirmed. This is a calendar date, not an inferred UTC timestamp. The group will enter its own member information. The collection guide distinguishes the retrospective topic-selection rationale from an unrecorded search history, and provides precise update instructions plus the separate `collection/01_collect_new_snapshot.R` entry file. The original archived scripts remain unchanged. RQ2 labels remain preserved; the unavailable original Excel expression/workbook is the narrow outstanding method evidence, rather than an invented requirement to prove manual coding.
+R collection on 28 September 2026 is now group-confirmed. This is a calendar date, not an inferred UTC timestamp. The group-authored names and IDs have since been copied into the shared CSV; the group will enter its actual contribution percentages, roles and review confirmations. The collection guide distinguishes the retrospective topic-selection rationale from an unrecorded search history, and provides precise update instructions plus the separate `collection/01_collect_new_snapshot.R` entry file. The original archived scripts remain unchanged. RQ2 labels remain preserved; the unavailable original Excel expression/workbook is the narrow outstanding method evidence, rather than an invented requirement to prove manual coding.
+
+## Closing review and fresh repository status
+
+The three-layer closing review is in `docs/CLOSING_REVIEW.md`: (1) structure and use of the available evidence, (2) conceptual and methodological reasoning, and (3) execution, interpretation and deliverable consistency. This distinguishes sound numerical implementation from unresolved measurement or inference limitations; it does not certify a grade or completed human review.
+
+A fresh read-only audit inspected `main` at **`b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86`**, with unauthenticated HTTP 200 and successful fetch. The old missing RQ2 function, annotation and formatting defects are resolved. All 29 remote result CSVs matched local results. These findings supersede the historical a316232 findings for the new commit, without rewriting that history.
+
+The roster now uses the names/IDs the group entered in GitHub: Dinh Trung Le — 22084424; Huynh Thanh Bach Phan — 22166214; Minh Duc Tran — 22084844. The custom YAML field previously used was not connected to the display; the shared CSV is. Contributions and review confirmations remain unfilled.
+
+The tracked `docs/group36_poster.pdf` remains the old raster output and must be replaced by the new R-generated poster. No final integrated report PDF was tracked at b8b2702. The required submission is the two PDFs through Ultra plus an accessible code/data repository; keeping the checked final PDFs in the repository is recommended for version alignment, not an additional explicit PDF-hosting rule.
+
+The user's Windows session is preserved in `docs/GROUP_RUN_SESSION_INFO.txt`; it records R 4.6.1 and different package versions from the independent R 4.4.3 audit. Matching CSVs support numerical agreement but do not alone prove a successful final-machine Knit. Earlier 28-page/one-page renders precede the closing source edits; consult the latest validation record before treating them as current.
+
+Word Permission denied errors should be addressed by closing the existing Word document/preview or rendering to a unique output filename, then checking directory access if the problem remains. The output-specific `fig.align` setting removes the unsupported Word setting while retaining PDF/HTML centring and Word document styling. These are presentation/access corrections, not analytical changes.

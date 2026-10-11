@@ -165,13 +165,25 @@ analyse_text <- function(comments) {
 # Returns assignments for ALL input IDs (NA for excluded documents), diagnostics,
 # cluster_terms, examples, cluster_summary, cluster_thread, exclusions,
 # dendrogram, distance, silhouette, tfidf, settings, and selected_k.
-analyse_clusters <- function(comments, text_analysis, k_override = NULL) {
+analyse_clusters <- function(comments, text_analysis, k_override = NULL,
+                             minimum_tokens = 5L,
+                             minimum_document_frequency = 2L) {
   if (!requireNamespace("cluster", quietly = TRUE)) {
     stop("Package 'cluster' is required. Run the project setup script first.")
   }
   if (!all(c("comment_id", "thread_id", "text") %in% names(comments))) {
     stop("Clustering requires comment_id, thread_id and text.")
   }
+  for (setting in c("minimum_tokens", "minimum_document_frequency")) {
+    value <- get(setting)
+    if (length(value) != 1L || !is.numeric(value) || is.na(value) ||
+        !is.finite(value) || value < 1L || value > .Machine$integer.max ||
+        value != as.integer(value)) {
+      stop(setting, " must be one positive integer.")
+    }
+  }
+  minimum_tokens <- as.integer(minimum_tokens)
+  minimum_document_frequency <- as.integer(minimum_document_frequency)
   ids <- as.character(comments$comment_id)
   if (!setequal(ids, names(text_analysis$tokens))) {
     stop("Text-analysis IDs and comment IDs differ; do not join by row position.")
@@ -181,16 +193,22 @@ analyse_clusters <- function(comments, text_analysis, k_override = NULL) {
                         "generated", "generative")
   tokens <- lapply(text_analysis$tokens[ids], function(z) z[!z %in% domain_stopwords])
   lengths_before_df <- lengths(tokens)
-  eligible <- lengths_before_df >= 5L
+  eligible <- lengths_before_df >= minimum_tokens
+  short_reason <- if (minimum_tokens == 5L) {
+    "Fewer than five retained cluster tokens"
+  } else {
+    paste("Fewer than", minimum_tokens, "retained cluster tokens")
+  }
   exclusions <- data.frame(comment_id = ids[!eligible],
-                            reason = rep("Fewer than five retained cluster tokens",
-                                         sum(!eligible)), stringsAsFactors = FALSE)
+                            reason = rep(short_reason, sum(!eligible)),
+                            stringsAsFactors = FALSE)
   eligible_ids <- sort(ids[eligible])
   if (length(eligible_ids) < 3L) stop("Fewer than three texts are eligible for clustering.")
   counts <- .text_dtm(tokens[eligible_ids], eligible_ids)
   initial_n <- nrow(counts)
   document_frequency <- colSums(counts > 0)
-  keep_terms <- document_frequency >= 2L & document_frequency <= 0.8 * initial_n
+  keep_terms <- document_frequency >= minimum_document_frequency &
+    document_frequency <= 0.8 * initial_n
   counts <- counts[, keep_terms, drop = FALSE]
   if (!ncol(counts)) stop("No terms remain after document-frequency filtering.")
   nonempty <- rowSums(counts) > 0
@@ -308,8 +326,8 @@ analyse_clusters <- function(comments, text_analysis, k_override = NULL) {
        silhouette = sil, tfidf = tfidf, selected_k = selected_k,
        settings = list(n_input = nrow(comments), n_initial_eligible = initial_n,
                        n_clustered = n, n_excluded = nrow(exclusions),
-                       n_terms = ncol(tfidf), minimum_tokens = 5L,
-                       minimum_document_frequency = 2L,
+                       n_terms = ncol(tfidf), minimum_tokens = minimum_tokens,
+                       minimum_document_frequency = minimum_document_frequency,
                        maximum_document_proportion = 0.8,
                        tf = "1 + log(count) for nonzero counts", idf = "log(n / df)",
                        normalisation = "L2 row norm", distance = "cosine dissimilarity",
@@ -319,6 +337,65 @@ analyse_clusters <- function(comments, text_analysis, k_override = NULL) {
                        used_fallback = used_fallback,
                        selected_mean_silhouette = mean(sil[, "sil_width"]),
                        seed_required = FALSE))
+}
+
+# A limited, descriptive representation check motivated by short/sparse texts.
+# Exactly three alternatives alter one filter at a time; the primary fit and
+# selection rule are retained. No alternative is promoted as a new optimum.
+# All variants use the same TF-IDF calculation, cosine distance, average linkage,
+# k = 2:8 range and five-comment cluster-size guard in analyse_clusters().
+# Each alternative recomputes its vocabulary/IDF within its retained documents.
+# Return: one data-frame row per specification (primary + three alternatives).
+# Primary cluster assignments are not changed.
+cluster_representation_sensitivity <- function(comments, text_result,
+                                               cluster_analysis = NULL) {
+  primary <- if (is.null(cluster_analysis)) {
+    analyse_clusters(comments, text_result)
+  } else cluster_analysis
+  if (!identical(primary$settings$minimum_tokens, 5L) ||
+      !identical(primary$settings$minimum_document_frequency, 2L) ||
+      !identical(primary$settings$linkage, "average") ||
+      !setequal(primary$assignments$comment_id, comments$comment_id)) {
+    stop("The representation check requires the default primary fit for these comments.")
+  }
+  specifications <- data.frame(
+    specification = c("Primary", "Minimum 10 tokens", "Minimum 20 tokens",
+                      "Minimum document frequency 3"),
+    minimum_tokens = c(5L, 10L, 20L, 5L),
+    minimum_document_frequency = c(2L, 2L, 2L, 3L),
+    stringsAsFactors = FALSE)
+  fits <- c(list(primary), lapply(seq.int(2L, nrow(specifications)), function(i) {
+    analyse_clusters(comments, text_result,
+      minimum_tokens = specifications$minimum_tokens[i],
+      minimum_document_frequency = specifications$minimum_document_frequency[i])
+  }))
+  summary_rows <- lapply(seq_along(fits), function(i) {
+    fit <- fits[[i]]
+    selected <- fit$diagnostics[fit$diagnostics$selected, , drop = FALSE]
+    data.frame(specifications[i, , drop = FALSE],
+      n_input = nrow(comments), n_clustered = fit$settings$n_clustered,
+      n_excluded = fit$settings$n_excluded, n_terms = fit$settings$n_terms,
+      k = fit$selected_k, minimum_size = selected$minimum_size,
+      maximum_size = selected$maximum_size,
+      sizes = paste(sort(fit$cluster_summary$n_comments, decreasing = TRUE),
+                    collapse = "/"),
+      mean_silhouette = selected$mean_silhouette,
+      admissible = selected$admissible, stringsAsFactors = FALSE)
+  })
+  do.call(rbind, summary_rows)
+}
+
+# Empirical properties of the retained vectors and selected primary partition.
+# The 0.05 silhouette band is descriptive, not a universal validity threshold.
+cluster_geometry_diagnostics <- function(cluster_analysis) {
+  distances <- as.numeric(cluster_analysis$distance)
+  sil_width <- cluster_analysis$silhouette[, "sil_width"]
+  # For non-negative TF-IDF, zero dot product means no shared retained term.
+  # A small tolerance absorbs roundoff near cosine distance one.
+  data.frame(zero_entry_share = mean(cluster_analysis$tfidf == 0),
+    median_distance = stats::median(distances),
+    no_shared_term_pair_share = mean(distances >= 1 - 1e-12),
+    near_zero_silhouette_share = mean(abs(sil_width) < 0.05))
 }
 
 plot_text_frequencies <- function(text_analysis, n = 20L) {

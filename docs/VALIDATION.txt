@@ -32,9 +32,9 @@ ACTUAL R MARKDOWN OUTPUT AND VISUAL REVIEW
   cluster diagnostics+dendrogram+profiles, full network+LCC and2centralities.
 - Poster inspected at full-page scale: four RQs, methods, results, limitations,
   references and repository; no clipping or overflow observed.
-- The current review PDFs include the confirmed date, sampling rationale and
-  Excel-label provenance update. They still await the user's member details
-  and actual group review; they are not final submission PDFs.
+- The previously rendered review PDFs include the confirmed date, sampling
+  rationale and Excel-label provenance update. They predate the closing roster
+  and poster wording edits and are not final submission PDFs.
 - Actual Word conversion passed, ZIP CRC/XML valid,13tables,7centred figures
   (via CaptionedFigure style), native3-levelTOC and cover GitHub link. An earlier
   transient truncated Word output was discarded; fresh render and direct Pandoc
@@ -58,7 +58,8 @@ NOT ESTABLISHED BY THESE CHECKS
 - Semantic correctness of all labels, coding reliability or an agreed ambiguity
   policy. Existing decisions are preserved, not silently recoded.
 - Independence of comments or population/causal validity of the chi-square test.
-- Actual member names/SIDs/contributions or completed human group evaluation.
+- Actual contribution percentages/roles or completed human group evaluation.
+  Names/SIDs were subsequently sourced from the group-authored GitHub YAML.
 - Future marker access, successful user-machine Knit, or any guaranteed mark.
 
 NEXT: follow README and docs/FINAL_AUDIT.md, complete real group facts,
@@ -97,3 +98,68 @@ ACTUAL VALIDATION AFTER THE GROUP CONFIRMATION
 - RQ2 contingency table, p-value, cluster and network results remain unchanged.
 - Maintained project documentation is English. The original source/data files
   remain unchanged; chronology of previous audit records is preserved above.
+
+CLOSING REPOSITORY AND METADATA CHECK — COMMIT b8b2702
+- Fresh read-only fetch and unauthenticated HTTP200; main at
+  b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86. No remote writes or pushes.
+- This new commit resolves the historical a316232 missing function, actual
+  annotation CSV and formatting asset defects. All 29 result CSVs matched
+  the local results at comparison time; active modules/assets also matched.
+- Names and SIDs from group-authored GitHub report YAML now populate the
+  shared group_contributions.csv. Actual roles/percentages remain blank;
+  no completed human review or contribution allocation has been invented.
+- docs/group36_poster.pdf is the old raster poster and must be replaced with
+  the current-source output. No final integrated report PDF was tracked.
+  PDF submission through Ultra is mandatory; GitHub archival of matching
+  final PDFs is recommended, not a separate explicit brief requirement.
+- User Windows session (R4.6.1) is preserved in docs/GROUP_RUN_SESSION_INFO.txt.
+  outputs/session_info.txt describes the latest executed local analysis.
+- Word output-file locking guidance added; output-specific fig.align setting
+  avoids the unsupported Word option without changing analytical calculations.
+- Closing poster wording explicitly retains the dependence limitation and
+  concrete two-comment lexical-cluster example.
+- See docs/CLOSING_REVIEW.md for the structure/reasoning/execution review.
+- Closing execution completed with actual R4.4.3: check_project.R PASSED.
+- Re-rendered closing report: 28 pages. Re-rendered closing poster: one A2
+  page. Inspected the updated cover, relevant report pages and whole poster;
+  no overflow remained. Sources retain Arial; preview fallbacks are Nimbus
+  Sans for the report and DejaVu Sans for the poster because Arial is absent
+  on this machine. Inspect the group's final Arial renders locally.
+- Word check rendered successfully (422609 bytes); DOCX ZIP/XML are valid,
+  all three supplied SIDs are present and all seven CaptionedFigure blocks
+  are centred. No unsupported fig.align warning appeared in this run.
+- All eight frozen input/archive hashes still match the pre-review record.
+  No API collection ran during analysis or knitting. RQ2, cluster and network
+  numerical results remain unchanged.
+- Shared metadata remains intentionally incomplete: contribution percentages,
+  actual roles and genuine group review are still the group's responsibility.
+
+
+METHODOLOGICAL IMPROVEMENT REVISION — ACTUAL R EXECUTION
+- check_project.R passed on R4.4.3 after adding design sensitivity, exact
+  contextual evidence checks and the separate AI-SENS-v1 annotation audit.
+- Reversed-row checks preserve author selection and annotation rate tables.
+  Invalid audit excerpts are rejected. Full-corpus reply flags are retained.
+- All 10 pre-revision input/archive files remain byte-identical. All 29 prior
+  result CSVs remain byte-identical. Original teammate labels/test and network
+  numerical results are preserved; added analyses have separate outputs.
+- AI audit covers 278 comments: 128 TRUE, 145 FALSE, 5 AMBIGUOUS. Among 273
+  determinate cases, 14 differ. Annotation, rule and masked-input hashes match
+  the freeze manifest. This is AI-assisted sensitivity, not human validation.
+- Independent recomputation confirmed the original -2.239706 pp contrast,
+  first-author +0.801115 pp, AI-determinate +1.082974 pp and uniform-ambiguity
+  scenarios +1.864583/+0.160747 pp. These scenarios are not bounds.
+- Three representation checks keep weak separation; default primary cluster
+  object/assignments are preserved. Context examples span all five threads.
+- Updated network figures preserve nodes/edges/metrics and show computed
+  in-degree through size, colour, leader labels and legends.
+- Report preview: 30 pages; poster preview: one A2 page. All report pages reviewed
+  through contact sheets, with detailed checks of new tables, contextual
+  interpretation, network figures and appendix. Whole poster inspected.
+- Word output rendered; DOCX structure, roster and 7 centred figure styles checked.
+- Report preview uses Nimbus Sans; poster preview uses DejaVu Sans. Sources
+  retain Arial 12, 1.5 spacing, 16-point headings, TOC, agreed page breaks and margins.
+  The report is at the 30-page maximum: inspect the final Arial render after
+  entering contributions and actual group review. No grade is guaranteed.
+- No new API collection, external AI call or historical-data replacement
+  occurs during Knit. AI audit decisions are supplied, inspectable artefacts.

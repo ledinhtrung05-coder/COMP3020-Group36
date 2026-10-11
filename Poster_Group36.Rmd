@@ -45,6 +45,11 @@ no_practice <- rq2$rates[rq2$rates$verification_specific == "FALSE", ]
 specific <- rq2$rates[rq2$rates$verification_specific == "TRUE", ]
 top_authors <- head(network$node_metrics, 2L)
 cluster_sizes <- table(clusters$assignments$cluster)
+# Interpret the reviewed lexical pair only if its two-comment membership is unchanged.
+poster_pair <- clusters$assignments$cluster[match(c("43877106", "47289697"),
+  clusters$assignments$comment_id)]
+poster_pair_confirmed <- all(!is.na(poster_pair)) && poster_pair[1] == poster_pair[2] &&
+  sum(clusters$assignments$cluster == poster_pair[1], na.rm=TRUE) == 2L
 bridge_rows <- bridge$receiver_rates
 bridge_text <- paste(sprintf("C%s: %s/%s (%s\\%%)", bridge_rows$cluster,
   bridge_rows$comments_receiving_reply, bridge_rows$comments,
@@ -102,11 +107,7 @@ poster_plot("rq3_diagnostics.pdf", function() {
   abline(h=5, col="#981C3C", lty=2)
 }, height=2.55, pointsize=11)
 poster_plot("rq4_full_network.pdf", function() {
-  par(mar=c(0, 0, 0, 0))
-  plot(network$graph, layout=network$layout_full,
-    vertex.size=4.2, vertex.color="#177B87", vertex.frame.color="white",
-    vertex.label=NA, edge.color="#73838E99", edge.width=0.75,
-    edge.arrow.size=0.27, edge.arrow.width=0.65, edge.curved=0.08, margin=0.07)
+  plot_network_full(network, main="", compact=TRUE)
 }, height=4.6)
 ```
 
@@ -142,21 +143,21 @@ Most frequent words: `r tex_escape(frequent_text)`. Frequency does not establish
 \postercaption{Figure 2. Comments with a retained direct reply.}
 Difference (specific minus no specific): \textbf{`r sprintf("%+.2f", rq2$difference_pp)` percentage points}.\par
 Yates-corrected $\chi^2(1)=`r formatC(unname(rq2$test$statistic),digits=3,format="f")`$, \textbf{$p=`r formatC(rq2$test$p.value,digits=4,format="f")`$}. Smallest expected count: `r round(min(rq2$expected),1)`.\par
-The test does not detect an association. Author and thread dependence weaken inference. A large p-value does not prove no relationship.\par
+First per author: +`r formatC(rq2$sensitivity$summary$difference_pp[2],digits=2,format="f")` points. AI rule (excluding `r label_sensitivity$n_ambiguous` ambiguous): +`r formatC(label_sensitivity$summary$difference_pp[2],digits=2,format="f")`. Small contrasts change direction; dependence remains.\par
 \vspace{3mm}
 \postersection{posterGreen}{RQ3 \quad Content clusters}
-\textbf{Do comments form meaningful lexical groups around responsibility and verification?}\par
+\textbf{What content clusters emerge, and which aspects of responsibility or verification characterise them?}\par
 Log TF-IDF, L2 normalisation, cosine distance and average-link hierarchical clustering of `r clusters$settings$n_clustered` eligible comments.\par
 \includegraphics[width=\linewidth]{outputs/figures/poster/rq3_diagnostics.pdf}\par
 \postercaption{Figure 3. Separation and size diagnostics for $k=2$--$8$.}
 Selected $k=`r clusters$selected_k`$`r if (clusters$settings$used_fallback) " as a diagnostic fallback" else ""`; mean silhouette \textbf{`r formatC(clusters$settings$selected_mean_silhouette,digits=3,format="f")`}. Cluster sizes: \textbf{`r paste(as.integer(cluster_sizes),collapse=" and ")`}.\par
-\posterfinding{posterPaleGreen}{`r if (clusters$settings$used_fallback || clusters$settings$selected_mean_silhouette < 0.05) "Weak, unbalanced separation does not support stable thematic groups." else "Interpret the lexical groups cautiously and check their content in context."`}
+\posterfinding{posterPaleGreen}{`r if (clusters$settings$used_fallback || clusters$settings$selected_mean_silhouette < 0.05) { if (poster_pair_confirmed) "The tiny pair uses 'hand' in different senses. Three representation checks also fail to support clear themes." else "Weak, unbalanced separation does not support stable thematic groups." } else "Interpret the lexical groups cautiously and check their content in context."`}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.239\textwidth}
 \postersection{posterBurgundy}{RQ4 \quad Who and what gets replies?}
 \textbf{How are replies structured, and how do they connect to content clusters?}\par
 \includegraphics[width=\linewidth]{outputs/figures/poster/rq4_full_network.pdf}\par
-\postercaption{Figure 4. Full directed author reply network. Nodes have equal size; an arrow goes from replying author to parent author.}
+\postercaption{Figure 4. Full reply network. Larger nodes receive replies from more distinct authors; orange highlights the two leading targets.}
 \textbf{`r net_value("Network authors")` authors \quad `r net_value("Unique directed author pairs")` directed pairs}\par
 `r net_value("Matched reply events")` matched reply events. The largest weak component contains `r net_value("Largest weak component")` authors (`r round(100*net_value("Largest weak component share"),1)`\%). `r net_value("Authors outside graph")` corpus authors have no retained between-author edge.\par
 \textbf{Two structural measures}\par
@@ -168,19 +169,19 @@ Author & In-degree & Betweenness\\
 \end{tabular*}\par
 \postercaption{Table 1. Distinct replying authors and directed, unweighted, normalised betweenness in the full graph.}
 \textbf{Content bridge.} Comments receiving replies by lexical group: `r bridge_text`. Weak and unequal clusters prevent a reliable thematic comparison.\par
-\posterfinding{posterPaleRose}{Reply prominence describes structural position. It does not establish expertise, approval or influence.}
+\posterfinding{posterPaleRose}{Replies to one verification proposal include both objections and qualified support. Prominence does not imply approval.}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.239\textwidth}
 \postersection{posterGreen}{Main findings}
 \textbf{Content.} The selected discussions connect checking code with ownership, review and trust.\par
-\textbf{Response.} Specific-practice comments have a slightly lower observed reply rate. The exploratory test supplies no clear evidence of an association.\par
+\textbf{Response.} The reply-rate contrast changes direction with author weighting and an explicit AI-assisted coding rule. A stable directional relationship is not established.\par
 \textbf{Structure.} Most network participants share one large weak component, while lexical clustering separates comments poorly.\par
 \posterfinding{posterPaleTeal}{The strongest evidence is descriptive: what these participants discuss and who replies to whom. Stronger claims require broader data and better measurement.}
 \vspace{3mm}
 \postersection{posterTeal}{Limits and next steps}
 Five selected, uneven threads cannot represent all programmers or workplace behaviour.\par
 Thread and author dependence, ambiguous text, deleted or missing parents, and short comments constrain inference.\par
-RQ2 uses `r specific$n` TRUE and `r no_practice$n` FALSE labels, reported as created using code in Excel. The R ID list reproduces them; the original Excel rule remains uninspected.\par
+The original Excel rule remains uninspected. A separate AI-assisted reading flags `r label_sensitivity$n_differences` differences and `r label_sensitivity$n_ambiguous` ambiguous cases; it is not human validation.\par
 Broader thread sampling, documented annotation and contextual checks should precede stronger substantive conclusions.\par
 \vspace{3mm}
 \postersection{posterBurgundy}{Reproducibility and sources}

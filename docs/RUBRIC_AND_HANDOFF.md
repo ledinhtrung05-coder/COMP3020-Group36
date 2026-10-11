@@ -12,8 +12,8 @@
 | Overall findings and limitations | Integrated conclusions with sample/measurement/inference/network limits | Revise against actual output |
 | Report Rmd->PDF, <=30 pages | Report_Group36_Integrated.Rmd; TOC/template page starts retained | Verify actual final PDF is at most 30 pages (10–30 in the outline), as recorded in VALIDATION.txt |
 | One-page scientific poster | Poster_Group36.Rmd; A2 landscape/four columns, shared computations and vector plots | Render, check exactly one page, figures/references/member contributions, readability and agreement with report |
-| GitHub/GitLab code+data, accessible to marker | Existing repo audited at main/a316232; HTTP 200 and read-only clone succeeded | Replace old/broken remote files with final package contents, render and push outputs, recheck marker access |
-| Member details and contributions | Shared docs/group_contributions.csv read by report/poster | Fill real names/IDs/actual contributions and contribution_percent, summing to 100 |
+| GitHub/GitLab code+data, accessible to marker | Fresh repo audited at main/b8b2702; HTTP 200, integrated functions/assets and all 29 matching result CSVs | Old integration defects resolved; replace stale docs/group36_poster.pdf, keep final sources consistent and recheck marker access |
+| Member details and contributions | Shared docs/group_contributions.csv read by report/poster | Names/IDs copied from group-authored GitHub YAML; group fills actual roles and contribution_percent, summing to 100 |
 | Individual Q&A (10 marks) | docs/QA_PREPARATION.md | All members explain the whole project |
 
 Methods and interpretation each carry 7 of the 20 group marks; visual quality carries1 and originality2. The poster communicates the investigation, while the report supports verification. These are priorities, not a promised grade.
@@ -37,4 +37,14 @@ Read original_submissions/REPO_SOURCE_PROVENANCE.md for the exact recovered scri
 
 ## Subsequent group confirmation
 
-The group confirms R collection on 28 September 2026 and will complete its own member/SID/contribution record. Only the date is known; no time or timezone is inferred. The group reports an Excel expression/code step for RQ2, but the exact expression/workbook has not been supplied. These updates do not change the supplied data or establish independent manual coding. The brief requires collection-method documentation; an exact query history, UTC timestamp, coder log or formal reliability study is not an additional compulsory submission.
+The group confirms R collection on 28 September 2026. Names/IDs have now been copied from its GitHub report into the shared record; actual contributions and review remain for the group. Only the date is known; no time or timezone is inferred. The group reports an Excel expression/code step for RQ2, but the exact expression/workbook has not been supplied. These updates do not change the supplied data or establish independent manual coding. The brief requires collection-method documentation; an exact query history, UTC timestamp, coder log or formal reliability study is not an additional compulsory submission.
+
+## Closing status
+
+Read `docs/CLOSING_REVIEW.md` for the three-layer review of structure, reasoning and execution. Fresh repository commit b8b2702 supersedes the historical missing-file/interface findings above: the actual data, integrated modules and formatting assets are present, and all 29 result CSVs match. The stale tracked poster PDF still needs replacement. The brief requires the report/poster PDFs through Ultra and an accessible code/data repository; archiving the final report PDF in GitHub is recommended rather than a separately specified submission rule.
+
+Check the populated names/IDs, enter actual contribution shares and roles, and confirm group review after it occurs. Re-render after the closing source changes; older page counts are not automatic approval of a newer revision. Preserve the Windows session record in `docs/GROUP_RUN_SESSION_INFO.txt` separately from later runtime exports.
+
+## Subsequent methodological improvements
+
+Use `docs/CRITERIA_AND_IMPROVEMENTS.md` as the current evidence map. The revised report has 30 preview pages and the poster has one; the earlier 28-page record refers to the preceding version. Design/annotation sensitivity, representation diagnostics, cross-thread contextual examples and improved network figures are now integrated. Supplied data and 29 original result tables remain unchanged. Follow `docs/QA_PREPARATION.md` to prepare for the individual discussion; writing improvements do not replace each member's understanding. Re-knit with Arial and verify the 30-page/one-page limits after completing contributions and group review.

@@ -1,0 +1,7 @@
+"supplied_label","assistant_label","Freq"
+"FALSE","FALSE",142
+"TRUE","FALSE",3
+"FALSE","TRUE",11
+"TRUE","TRUE",117
+"FALSE","AMBIGUOUS",2
+"TRUE","AMBIGUOUS",3

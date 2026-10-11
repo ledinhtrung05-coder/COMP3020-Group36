@@ -53,3 +53,21 @@ Restored the native three-level TOC, the Research question wrapper and unnumbere
 - The group reports an Excel expression/code step for RQ2; its exact original expression/workbook has not been supplied. The intended definition, complete labels and matching 123-ID script are preserved without adding unsupported manual-coding or reliability claims.
 - Added a separate optional collection entry at `collection/01_collect_new_snapshot.R`, with EDIT settings and new-snapshot output. Archived scripts and analysed input files remain unchanged.
 - Clarified that exact UTC timestamps, search logs and coder/reliability records are not additional compulsory deliverables. The group will fill its own member/SID/contribution information.
+
+## Closing audit — current repository b8b2702
+
+- Fresh read-only inspection of `main` at b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86 confirms the previous missing-module/data/formatting defects are resolved. All 29 result CSVs match the local analysis. Earlier a316232 findings remain historical and are superseded for the current commit.
+- Copied the group's own three names and SIDs from its new report YAML into the shared contribution CSV. The former custom YAML key did not populate the cover. Actual contribution percentages, roles and review confirmations remain unfilled.
+- Preserved the user's Windows/R 4.6.1 session record in `docs/GROUP_RUN_SESSION_INFO.txt`, separate from the latest generated `outputs/session_info.txt`.
+- Identified the still-stale `docs/group36_poster.pdf` for replacement. Final PDFs are required through Ultra; archiving matching PDFs in the repository is recommended, not a new explicit brief requirement.
+- Added Word output-lock guidance and output-specific figure alignment. Clarified the poster's dependence limitation and concrete weak-cluster example; analytical inputs and labels remain unchanged.
+- Added the three-layer closing review in `docs/CLOSING_REVIEW.md`. A subsequent execution record must verify the latest render/page count; historical successful renders are not relabelled as new runs.
+
+## Methodological improvements after the closing review
+
+- Preserve teammate RQ2 labels/test and RQ4 metrics while adding first-comment-per-author and omitted-thread sensitivity outputs.
+- Add an explicitly AI-assisted, full-text sensitivity reading from a masked input view under a frozen operational rule, with exact excerpts and rationales. Original annotations remain unchanged.
+- Add sparse-geometry diagnostics and three declared representation checks to explain weak lexical clustering without manufacturing theme names.
+- Extend contextual readings to all five threads and link contrasting responses to their actual parent comments.
+- Encode in-degree through network node size and highlighted leaders, consistently in report and poster.
+- Extend evidence-linked whole-project oral preparation and criterion mapping. Retain all actual contribution/review fields for the group to complete.

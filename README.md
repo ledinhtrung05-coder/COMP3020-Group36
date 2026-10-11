@@ -8,13 +8,13 @@ Repository: https://github.com/ledinhtrung05-coder/COMP3020-Group36
 
 ## Verified status and remaining group information
 
-The full `source("check_project.R")` workflow passed on **R 4.4.3**, with igraph 2.3.4 and cluster 2.1.8. The report and poster were actually knitted: **28 report pages** and **one A2 landscape poster page**. Word conversion also passed. The actual package environment is recorded in `outputs/session_info.txt`; detailed checks and limitations are in `docs/VALIDATION.txt` and `docs/FINAL_AUDIT.md`.
+The current `source("check_project.R")` workflow passed on **R 4.4.3**, with igraph 2.3.4 and cluster 2.1.8, including the new sensitivity and evidence checks. The revised sources render to **30 report pages** and **one A2 landscape poster page**; Word conversion also passed. `docs/VALIDATION.txt` records execution and preview limits. The user's Windows run remains in `docs/GROUP_RUN_SESSION_INFO.txt`; `outputs/session_info.txt` describes the latest executed analysis. See `docs/CRITERIA_AND_IMPROVEMENTS.md` for the current criterion mapping; `docs/CLOSING_REVIEW.md` preserves the preceding audit.
 
 Arial was unavailable on the audit machine, so the report preview used Nimbus Sans and the poster preview used DejaVu Sans. The delivered Rmd sources still request **Arial**. The PDFs in `audit_previews/` are review copies, not final submission files. Complete the group information below, knit again on the submission machine and recheck pagination and layout.
 
 The group has confirmed that it collected the data using R on **28 September 2026**. This records a calendar date only; no exact time or timezone has been supplied. The year follows the 2026 assignment context. The group also reports using an Excel expression/code step for the RQ2 labels; the exact original expression or workbook has not been supplied. The existing 123-ID implementation and supplied labels remain unchanged.
 
-The remaining group actions are to enter member names, student IDs and actual contribution percentages, review the methods/results, and, if available, provide the original Excel expression or workbook so the label-generation procedure can be checked. A coder timestamp or independent-coding study is not an extra compulsory deliverable. Successful computations do not establish label validity or guarantee a mark. See [the collection and label guide](docs/COLLECTION_AND_LABELS_GUIDE.md) for the exact update locations.
+The confirmed names and student IDs are now populated in the shared CSV. The remaining group actions are to enter actual contribution percentages and roles, review the methods/results, and, if available, provide the original Excel expression or workbook so the label-generation procedure can be checked. A coder timestamp or independent-coding study is not an extra compulsory deliverable. Successful computations do not establish label validity or guarantee a mark. See [the collection and label guide](docs/COLLECTION_AND_LABELS_GUIDE.md) for the exact update locations.
 
 ## Run the project in Windows and RStudio
 
@@ -50,6 +50,17 @@ For a Word report:
 rmarkdown::render("Report_Group36_Integrated.Rmd", output_format = "word_document")
 ```
 
+If Word output reports **Permission denied**, first save and close the existing report in Word and close its preview pane, then render again. Windows may lock an open output file. To avoid overwriting a locked file, use a new output name:
+
+```r
+rmarkdown::render(
+  "Report_Group36_Integrated.Rmd", output_format = "word_document",
+  output_file = paste0("Report_Group36_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".docx")
+)
+```
+
+If a new name still fails, check that the project/output folder is writable and is not blocked by a synchronisation process. This is an output-file access issue, not evidence of missing RQ2 data. The former `fig.align` warning for Word is addressed with an output-specific chunk option; Word centring is supplied by the document styles/filter, without changing any analysis.
+
 After opening the result in Microsoft Word, press **Ctrl+A > F9 > Update entire table** to populate or refresh the table of contents and page numbers. Some viewers show only the TOC heading until this field is updated. The PDF contents page is compiled automatically. Do not copy fixed page numbers from an earlier document.
 
 If a LaTeX issue prevents PDF output, inspect the report content through HTML while resolving the issue:
@@ -64,7 +75,7 @@ The formatting was tested with Pandoc 3.1.3. Check the local version with `rmark
 
 ## Shared group details
 
-Complete `docs/group_contributions.csv` once with each member's `member_name`, `student_id`, `contribution_percent` and `actual_contribution`. Contribution percentages must be numeric and sum to **100**. Record actual work; do not infer contributions from commit counts or assign equal shares without group agreement.
+Check the three names and student IDs already copied from the group-authored GitHub report into `docs/group_contributions.csv`. Complete `contribution_percent` and `actual_contribution` there. Contribution percentages must be numeric and sum to **100**. Record actual work; do not infer contributions from commit counts or assign equal shares without group agreement.
 
 The report and poster read this same file, preventing inconsistent names, IDs or percentages. Complete the remaining review fields as appropriate rather than maintaining separate rosters in multiple files.
 
@@ -88,7 +99,7 @@ Interpretation must remain consistent across both outputs: the RQ2 test did not 
 
 The supplied `hn_comments_clean(after add true false).csv` is preserved byte-for-byte under the portable filename `data/annotations/verification_labels.csv`. It contains **278 comments and 14 columns**, including **123 TRUE and 155 FALSE** values of `verification_specific`. The 13 original columns match the frozen clean dataset. The raw and clean input snapshots remain unchanged.
 
-No relabelling, column extraction or additional label file is needed when using the complete package. The analysis joins on `comment_id`, validates shared fields and recomputes `received_reply` from retained parent–child relationships. Missing or mismatched annotation input stops execution; there is no fallback to the old aggregate table.
+The complete package includes both the unchanged supplied labels and a separate AI-assisted sensitivity audit. No manual column extraction or replacement of original labels is required. The analysis joins on `comment_id`, validates shared fields and recomputes `received_reply` from retained parent–child relationships. Missing or mismatched annotation input stops execution; there is no fallback to the old aggregate table.
 
 | `verification_specific` | No retained direct reply | Retained direct reply | Total |
 |---|---:|---:|---:|
@@ -98,6 +109,15 @@ No relabelling, column extraction or additional label file is needed when using 
 Actual R output gives Yates-corrected chi-square approximately 0.063666 and **p = 0.8007927**. Reply rates are 42.2764% for TRUE and 44.5161% for FALSE, a difference of −2.2397 percentage points. The by-thread table describes composition; it adds no further test and does not resolve comment/author dependence.
 
 The recovered original script, `original_submissions/repo_03_hypothesis_labeling_a316232.R`, assigns TRUE to 123 listed IDs and FALSE to the remainder. Its ID list exactly matches the supplied labels. The intended definition is a mention of a specific way to check or test AI-generated code. The group reports an Excel expression/code step, but its exact original expression/workbook is unavailable. Neither a hard-coded ID list nor matching counts reconstructs that expression or establishes the semantic correctness of every label. The most useful additional evidence is the original Excel expression or workbook, with its handling of quotations and ambiguous cases. This is a measurement-validity check, not a new compulsory separate submission. If a justified review changes a label, preserve the original version, record the reason, update the relevant snapshot checks and rerun all affected outputs.
+
+The revision adds four evidence-based checks:
+
+- One earliest retained comment per author, with full-corpus reply outcomes, and all five omitted-thread descriptive contrasts.
+- A separate full-corpus AI-assisted annotation sensitivity under `docs/AI_SENS_v1_RULE.md`. The completed decision file is supplied: no AI/API call runs during Knit. Exact excerpts and reasons are inspectable. It is not a human-validated replacement for the teammate's labels.
+- Three declared representation checks and sparse-geometry diagnostics explaining the weak clustering result.
+- Twelve contextual readings spanning all five discussions, actual reply examples and network visual encodings based on in-degree.
+
+The AI-assisted annotation file is a supplied qualitative audit artefact. R reproduces its joins, checks and sensitivity calculations; it does not regenerate semantic judgments from text automatically. Group review remains necessary before treating the readings as the group's own interpretation. See `docs/CRITERIA_AND_IMPROVEMENTS.md` and the updated oral-discussion guide.
 
 Generated outputs are:
 
@@ -130,9 +150,21 @@ The entry file does not run during Knit. Keep its new output separate from `data
 
 Use the supplied frozen inputs to reproduce the report. A fresh API download may change the comment count and cannot reconstruct previously deleted content.
 
-## Repository audit and update procedure
+## Current repository check — b8b2702
 
-The read-only audit inspected `main` at commit `a316232f509d1e283f048a0e62d5ccfffa1886ba`, dated **9 October 2026, 21:15:57 Sydney time**. At that point the URL returned HTTP 200 without sign-in, and cloning/history inspection succeeded. These findings apply to that pinned historical commit, not to later uploads. No remote writes or pushes were made during the audit.
+A fresh read-only fetch and unauthenticated HTTP request succeeded at `main` commit **`b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86`** (commit timestamp: 9 October 2026, 23:54:53 Sydney time). This supersedes the old missing-module/data/formatting findings below: the integrated RQ2 function, actual annotation CSV and formatting assets are now present. All **29 result CSVs** matched the local results at comparison time. No remote write or push was performed.
+
+The names and IDs entered in the repository's custom `student id:` YAML field did not feed the implemented cover. They have now been copied to the shared `docs/group_contributions.csv`: Dinh Trung Le (22084424), Huynh Thanh Bach Phan (22166214), and Minh Duc Tran (22084844). Actual roles, contribution percentages and review confirmations remain for the group; none were invented.
+
+The remaining concrete remote mismatch is **`docs/group36_poster.pdf`**, which is the earlier raster poster with outdated wording and a different page size. Replace it with the poster generated from the current Rmd. No final integrated report PDF was tracked at this commit. The brief requires PDF submission through Ultra and code/data in the accessible repository; it does not explicitly require the report PDF to be stored in GitHub. Archiving the checked PDFs with matching sources is recommended for version consistency.
+
+The repository also contains an old standalone cleaner and a blank annotation template. They are not used by the integrated workflow and must not replace active modules or the actual labels. The user's Windows run record is preserved as `docs/GROUP_RUN_SESSION_INFO.txt` (R 4.6.1); `outputs/session_info.txt` belongs to the latest analysis run and can be regenerated. Their environments differ, while the matched CSVs support numerical agreement.
+
+The closing source changes include the shared roster, clearer poster dependence/cluster-example wording and output-specific figure alignment. Their latest render status is recorded in `docs/VALIDATION.txt`; earlier page counts do not automatically certify a later source revision. See [the three-layer closing review](docs/CLOSING_REVIEW.md).
+
+## Earlier repository audit and update procedure
+
+The earlier read-only audit inspected `main` at commit `a316232f509d1e283f048a0e62d5ccfffa1886ba`, dated **9 October 2026, 21:15:57 Sydney time**. At that point the URL returned HTTP 200 without sign-in, and cloning/history inspection succeeded. These findings apply to that pinned historical commit, not to later uploads. No remote writes or pushes were made during the audit.
 
 That historical version lacked the real annotation file and formatting assets, contained an older report, and placed a standalone RQ2 script where callers expected `analyse_hypothesis()`. The integrated package keeps the function module in `R/` and the original script in `original_submissions/`. Do not overwrite `R/03_hypothesis.R` with the standalone original.
 
@@ -142,7 +174,7 @@ For a new package update:
 2. Copy the **contents inside the project folder** into the **existing repository root**, replacing corresponding files while preserving `.git/`. Avoid creating a nested `COMP3020-Group36/COMP3020_Group36/` project.
 3. Remove the superseded `docs/FINAL_AUDIT_VI.md` if it remains from an earlier upload; the English replacement is `docs/FINAL_AUDIT.md`. Keep `data/annotations/verification_labels.csv`. An old blank `verification_labels_TEMPLATE.csv` is not analytical data. If the historical `R/01_clean_hn.R` remains, do not source it in the integrated workflow; its preserved copy belongs in `original_submissions/`.
 4. Open the `.Rproj`, run `source("check_project.R")`, then knit and inspect both PDFs. Recollection is unnecessary.
-5. Include the checked final report and poster PDFs with their sources, data, references and session information. Replace any outdated `docs/group36_poster.pdf` with the matching final poster rather than leaving conflicting versions. `audit_previews/` is ignored by Git and does not replace submission PDFs.
+5. Submit the checked report and poster PDFs through Ultra. For consistent archival, also keep the checked PDFs with their matching sources, data, references and session information; storing the report PDF in the repository is recommended, not an extra explicit brief requirement. Replace any outdated `docs/group36_poster.pdf` with the matching final poster rather than leaving conflicting versions. `audit_previews/` is ignored by Git and does not replace submission PDFs.
 6. Review the changes in GitHub Desktop or RStudio's Git tab, commit and push. Preserve repository history. After pushing, check the exact files in a private/incognito browser window and confirm that they match the submitted PDFs.
 
 For group work, assign an integration owner and use small, descriptive commits on branches such as `rq2`, `rq4` and `integration`. Review changes before merging into `main`; avoid simultaneous edits to the main report or frozen inputs.

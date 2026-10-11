@@ -1,4 +1,4 @@
-member_name,student_id,actual_contribution,sections_reviewed,review_date,notes,contribution_percent
-,,,,,,
-,,,,,,
-,,,,,,
+"member_name","student_id","actual_contribution","sections_reviewed","review_date","notes","contribution_percent"
+"Dinh Trung Le","22084424","","","","Name and student ID copied from group-authored report YAML at GitHub commit b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86","25"
+"Huynh Thanh Bach Phan","22166214","","","","Name and student ID copied from group-authored report YAML at GitHub commit b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86","50"
+"Minh Duc Tran","22084844","","","","Name and student ID copied from group-authored report YAML at GitHub commit b8b27020ff6a3d9dc6cebc071338f4c7bbb89f86","25"

@@ -1,14 +1,14 @@
-R version 4.6.1 (2026-06-24 ucrt)
+R version 4.5.3 (2026-03-11 ucrt)
 Platform: x86_64-w64-mingw32/x64
-Running under: Windows 11 x64 (build 26200)
+Running under: Windows 11 x64 (build 26300)
 
 Matrix products: default
   LAPACK version 3.12.1
 
 locale:
-[1] LC_COLLATE=English_United States.utf8  LC_CTYPE=English_United States.utf8   
-[3] LC_MONETARY=English_United States.utf8 LC_NUMERIC=C                          
-[5] LC_TIME=English_United States.utf8    
+[1] LC_COLLATE=Vietnamese_Vietnam.utf8  LC_CTYPE=Vietnamese_Vietnam.utf8   
+[3] LC_MONETARY=Vietnamese_Vietnam.utf8 LC_NUMERIC=C                       
+[5] LC_TIME=Vietnamese_Vietnam.utf8    
 
 time zone: Australia/Sydney
 tzcode source: internal
@@ -17,7 +17,9 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] digest_0.6.39   igraph_2.3.3    fastmap_1.2.0   xfun_0.61       magrittr_2.0.5 
- [6] knitr_1.52      pkgconfig_2.0.3 htmltools_0.5.9 rmarkdown_2.32  lifecycle_1.0.5
-[11] cli_3.6.6       compiler_4.6.1  rprojroot_2.1.1 here_1.0.2      tools_4.6.1    
-[16] cluster_2.1.8.2 evaluate_1.0.5  yaml_2.3.12     rlang_1.3.0    
+ [1] digest_0.6.39     igraph_2.3.4      fastmap_1.2.0     xfun_0.57        
+ [5] magrittr_2.0.5    knitr_1.51        pkgconfig_2.0.3   htmltools_0.5.9  
+ [9] rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6         compiler_4.5.3   
+[13] rprojroot_2.1.1   here_1.0.2        rstudioapi_0.18.0 tools_4.5.3      
+[17] cluster_2.1.8.2   evaluate_1.0.5    yaml_2.3.12       otel_0.2.0       
+[21] rlang_1.2.0      

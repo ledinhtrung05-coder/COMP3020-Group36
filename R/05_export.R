@@ -4,6 +4,8 @@ export_results <- function(results, project_root) {
   dir.create(table_dir, recursive = TRUE, showWarnings = FALSE)
   save_table <- function(x, name) write_csv_utf8(x, file.path(table_dir, paste0(name, ".csv")))
   save_table(results$audit$summary, "data_audit")
+  save_table(results$context_examples, "context_examples_checked")
+  save_table(results$context_reply_links, "context_reply_links")
   save_table(results$audit$threads, "thread_summary")
   save_table(results$audit$reply_definition_changes, "reply_definition_changes")
   save_table(results$text$frequencies, "rq1_word_frequencies")
@@ -15,6 +17,12 @@ export_results <- function(results, project_root) {
   save_table(results$rq2$rates, "rq2_reply_rates")
   save_table(results$rq2$joined, "rq2_joined_annotations")
   save_table(results$rq2$by_thread, "rq2_reply_rates_by_thread")
+  save_table(results$rq2$sensitivity$summary, "rq2_design_sensitivity")
+  save_table(results$rq2$sensitivity$earliest_comments, "rq2_first_author_comments")
+  save_table(results$rq2$sensitivity$leave_one_thread_out, "rq2_leave_one_thread_out")
+  save_table(results$label_sensitivity$summary, "rq2_annotation_sensitivity")
+  save_table(results$label_sensitivity$comparison, "rq2_annotation_comparison")
+  save_table(results$label_sensitivity$joined, "rq2_annotation_audit_joined")
   save_table(data.frame(chi_square = unname(results$rq2$test$statistic),
     df = unname(results$rq2$test$parameter), p_value = results$rq2$test$p.value,
     difference_percentage_points = results$rq2$difference_pp,
@@ -22,6 +30,8 @@ export_results <- function(results, project_root) {
     provenance = results$rq2$provenance), "rq2_test_and_provenance")
   save_table(results$clusters$assignments, "rq3_cluster_assignments")
   save_table(results$clusters$diagnostics, "rq3_cluster_diagnostics")
+  save_table(results$clusters$representation_sensitivity, "rq3_representation_sensitivity")
+  save_table(results$clusters$geometry, "rq3_geometry_diagnostics")
   if (!is.null(results$clusters$sensitivity)) save_table(results$clusters$sensitivity, "rq3_linkage_sensitivity")
   save_table(results$clusters$cluster_summary, "rq3_cluster_summary")
   save_table(results$clusters$cluster_terms, "rq3_top_terms")

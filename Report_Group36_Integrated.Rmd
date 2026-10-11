@@ -2,10 +2,6 @@
 title: "Responsibility and verification of AI-generated code in online discussions"
 subtitle: "An exploratory study of five selected Hacker News discussions"
 author: "Group 36"
-student id:
-  - "Dinh Trung Le - 22084424"
-  - "Huynh Thanh Bach Phan - 22166214"
-  - "Minh Duc Tran - 22084844"
 date: "9 October 2026"
 output:
   pdf_document:
@@ -51,7 +47,9 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = TRUE,
-  fig.width = 7.0, fig.height = 4.0, fig.align = "center", fig.pos = "H",
+  fig.width = 7.0, fig.height = 4.0,
+  fig.align = if (knitr::is_latex_output() || knitr::is_html_output()) "center" else "default",
+  fig.pos = "H",
   dpi = 160, out.width = "5.8333in", cache = FALSE)
 options(width = 85)
 needed <- c("here", "knitr", "cluster", "igraph")
@@ -59,7 +57,7 @@ missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
 if (length(missing)) stop("Run install_packages.R first. Missing: ", paste(missing, collapse = ", "))
 here::i_am("Report_Group36_Integrated.Rmd")
 project_root <- here::here()
-for (script in c("00_data.R", "02_text_cluster.R", "03_hypothesis.R", "04_network.R", "05_export.R", "06_metadata.R")) {
+for (script in c("00_data.R", "02_text_cluster.R", "03_hypothesis.R", "04_network.R", "05_export.R", "06_metadata.R", "07_context.R", "08_annotation_sensitivity.R")) {
   source(here::here("R", script), encoding = "UTF-8")
 }
 group_members <- read_group_metadata(here::here("docs", "group_contributions.csv"))
@@ -68,15 +66,22 @@ clean_path <- here::here("data", "processed", "hn_comments_clean.csv")
 raw <- read_comments(raw_path)
 comments <- read_comments(clean_path, clean = TRUE)
 audit <- audit_comments(raw, comments)
+context_examples <- validate_context_examples(comments, here::here("data", "context_examples.csv"))
+context_reply_links <- build_context_reply_links(comments)
 text_result <- analyse_text(comments)
 rq2 <- analyse_hypothesis(comments,
   here::here("data", "annotations", "verification_labels.csv"))
+label_sensitivity <- analyse_annotation_sensitivity(comments, rq2,
+  here::here("data", "annotations", "verification_audit_AI_SENS_v1.csv"))
 clusters <- analyse_clusters(comments, text_result)
 clusters$sensitivity <- cluster_linkage_sensitivity(clusters)
+clusters$representation_sensitivity <- cluster_representation_sensitivity(comments, text_result, clusters)
+clusters$geometry <- cluster_geometry_diagnostics(clusters)
 network <- analyse_network(comments, seed = 3020)
 bridge <- analyse_cluster_replies(comments, clusters$assignments)
 results <- list(audit = audit, text = text_result, rq2 = rq2, clusters = clusters,
-                network = network, bridge = bridge)
+                network = network, bridge = bridge, context_examples = context_examples,
+                context_reply_links = context_reply_links, label_sensitivity = label_sensitivity)
 export_results(results, project_root)
 save_project_figures(results, project_root)
 net_value <- function(name) network$summary$value[match(name, network$summary$metric)]
@@ -102,7 +107,7 @@ if (isTRUE(params$final_mode) && length(blockers)) {
 }
 ```
 
-```{r review-status, echo=FALSE, results='asis'}
+```{r review-status, echo=FALSE, results='asis', include=FALSE}
 if (!isTRUE(params$final_mode)) {
   cat("**Review version.** The computations below run from the supplied files. This is not a submission-ready claim. Outstanding items: ",
       paste(blockers, collapse = "; "), ".\n\n", sep = "")
@@ -219,18 +224,20 @@ The indicators adapt verification concepts and add responsibility/formal-verific
 
 ### Contextual reading: what the indicators can and cannot mean {.unnumbered .page-break}
 
-Four purposively selected examples illustrate meaning, not representative qualitative coding. Full text remains traceable by ID.
+Purposive readings cover all five discussions, contrasting claims and sarcasm. Twelve examples, including the original four, are exported with exact excerpts and full text. They illustrate meaning, not prevalence.
 
-| Comment ID | Contextual interpretation |
+| Comment IDs | Contextual interpretation |
 |:--|:--|
-| 43862722 | Human ownership of AI-generated pull requests restores identifiable responsibility and independent review. |
-| 43867077 | Making approvers responsible for fixes could discourage helpful reviewers: responsibility is contested. |
-| 43863986 | Property-based testing requires defining properties before generating test inputs. |
-| 43862230 | Sarcasm about regenerating inconvenient tests shows why testing words do not imply endorsement. |
+| 43862722 / 43867077 | Human ownership supports accountability; imposing fixes on approvers may discourage review. |
+| 47292915 | AI users should own review, qualified by a high-trust setting. |
+| 47416156 | Engineers must choose tests using system knowledge. |
+| 49326866 | Review tools may help, but missed defects and cost remain concerns. |
+| 49378613 | Human involvement, coverage and separate test writing are proposed safeguards. |
+| 43862230 | Sarcasm about regenerated tests warns against equating keywords with approval. |
 
-: Contextual examples of responsibility and verification
+: Cross-thread examples and contrasting readings
 
-RQ1 therefore identifies human ownership, review independence and concrete checking practices, alongside disagreement about responsibility. These selected examples come from one discussion; they establish presence, not corpus-wide prevalence. RQ2 separately asks whether specific-practice mentions are associated with replies, which may express interest, clarification or disagreement.
+These cases connect **who must check** with **what makes checking credible**. They motivate RQ2's practice-mention question and RQ4's distinction between interaction and agreement; they do not measure effectiveness.
 
 ## RQ2: specific verification mentions and direct replies {.unnumbered .page-break}
 
@@ -299,6 +306,40 @@ show_table(thread_rates, "Reply proportions within each thread and supplied labe
 
 One category is absent in `r sum(rq2$by_thread$no_practice_n == 0 | rq2$by_thread$specific_n == 0)` thread(s). Its rate is unavailable, not zero. Uneven denominators help explain the pooled composition; this breakdown does not adjust for dependence.
 
+### Sensitivity to authors and thread composition {.unnumbered}
+
+Repeated observations can change weighting and violate independence [@altman1997]. As a post-hoc sensitivity, select each author's earliest retained comment by timestamp, breaking ties by numeric ID. Selection uses neither label nor reply outcome. Preserve its replies from the **full corpus**; recomputing replies within the reduced subset would wrongly change the outcome.
+
+```{r rq2-design-sensitivity, echo=FALSE}
+ds <- rq2$sensitivity$summary
+sd <- data.frame(View = c("All comments", "First per author"), n = ds$n,
+  FALSE_reply_percent = 100 * ds$no_practice_reply_rate,
+  TRUE_reply_percent = 100 * ds$specific_reply_rate,
+  Difference_pp = ds$difference_pp, Reference_p = ds$p_value)
+names(sd) <- c("View", "n", "FALSE %", "TRUE %", "Diff. pp", "Ref. p")
+show_table(sd, "Design sensitivity; both p-values retain an independence assumption", 3)
+```
+
+The reduced view removes repeat-author weighting but describes first retained comments, not all contributions. Its contrast is `r fmt_num(ds$difference_pp[2], 2)` percentage points. Shared-thread and interacting-author dependence remain. Omitting each thread in turn gives differences from `r fmt_num(min(rq2$sensitivity$leave_one_thread_out$difference_pp), 2)` to `r fmt_num(max(rq2$sensitivity$leave_one_thread_out$difference_pp), 2)` points; all five are exported. These checks show that the direction is not stable across these design choices. They are not a dependence-adjusted test or evidence of equivalence.
+
+### Sensitivity to the measurement rule {.unnumbered}
+
+A separate AI-assisted full-text pass applies the frozen **AI-SENS-v1** rule: explicit checking activities count, including quotations, criticism and agent checks; generic verification alone does not. Decisions include exact excerpts and reasons. The reading view omitted labels/outcomes, but prior context exposed several labelled examples, so this is **not independent blinded or human validation** [@grimmer2013]. The completed audit was frozen before comparison and never replaces the teammate's labels.
+
+Of `r label_sensitivity$n_reviewed` readings, `r label_sensitivity$n_ambiguous` remain ambiguous. Among `r label_sensitivity$n_determinate` determinate cases, `r label_sensitivity$n_differences` differ from supplied labels. This is disagreement between operationalisations, not a coding-error rate. For example, 47290993 explicitly mentions reviewing code, whereas 47290312 says only to prompt AI to verify software.
+
+```{r rq2-measurement-sensitivity, echo=FALSE}
+ms <- label_sensitivity$summary[1:2, ]
+md <- data.frame(Rule = c("Supplied", "AI rule: determinate"), n = ms$n,
+  FALSE_percent = 100 * ms$no_practice_reply_rate,
+  TRUE_percent = 100 * ms$specific_reply_rate,
+  Difference_pp = ms$difference_pp)
+names(md) <- c("Rule", "n", "FALSE %", "TRUE %", "Diff. pp")
+show_table(md, "Descriptive measurement sensitivity; the AI rule is not a gold standard", 2)
+```
+
+Assigning all ambiguous cases FALSE or all TRUE gives contrasts of `r fmt_num(label_sensitivity$summary$difference_pp[3], 2)` and `r fmt_num(label_sensitivity$summary$difference_pp[4], 2)` points. These are declared scenarios, not mathematical bounds. Measurement choice also changes the contrast's direction; AI interpretation errors and dependence remain. No further significance tests are selected from these views.
+
 ## RQ3: exploratory content clusters {.unnumbered .page-break}
 
 ### Representation, distance and selection rule {.unnumbered}
@@ -359,17 +400,34 @@ if (clusters$settings$used_fallback || clusters$settings$selected_mean_silhouett
 
 Median length, thread composition and complete examples remain exported. They diagnose interpretation rather than establish semantic validity. Relevance was not manually coded, so contextual or promotional material can remain.
 
-### Sensitivity to linkage {.unnumbered .page-break}
+### Sensitivity and diagnosis {.unnumbered .page-break}
 
-Complete linkage uses the same cosine dissimilarity; Ward.D2 uses Euclidean distance between the L2-normalised vectors. Each applies the same k range and size guard. Ward is not applied directly to cosine distances.
+Complete linkage retains cosine distance; Ward.D2 uses Euclidean distance on L2-normalised vectors. Both retain the k range and size guard.
 
 ```{r rq3-sensitivity, echo=FALSE}
 sensitivity_selected <- clusters$sensitivity[clusters$sensitivity$selected_within_method, ]
-show_table(sensitivity_selected[, c("method", "k", "mean_silhouette", "sizes", "admissible")],
+linkage_display <- data.frame(Linkage = c("Average", "Complete", "Ward.D2"),
+  k = sensitivity_selected$k, Silhouette = sensitivity_selected$mean_silhouette,
+  Sizes = sensitivity_selected$sizes,
+  Size_rule = ifelse(sensitivity_selected$admissible, "Pass", "Fail"))
+names(linkage_display)[5] <- "Size rule"
+show_table(linkage_display,
   "Selected diagnostic partition within each linkage/distance specification", 4)
 ```
 
-Complete linkage's selected silhouette is `r fmt_num(sensitivity_selected$mean_silhouette[sensitivity_selected$method == "complete_cosine"], 4)`; Ward's is `r fmt_num(sensitivity_selected$mean_silhouette[sensitivity_selected$method == "ward_euclidean"], 4)`. `r if (all(sensitivity_selected$mean_silhouette < 0.05)) "Neither alternative gives convincing separation. Changing linkage does not rescue a strong thematic interpretation." else "The alternatives require contextual assessment before any thematic interpretation."` Different distance scales prevent treating this as an algorithm leaderboard. Better-delimited documents and validated content labels are future work, not grounds to select a preferred conclusion now.
+Both alternatives have near-zero selected silhouette and do not support clear themes. Different distance scales prevent treating this as an algorithm leaderboard; internal fit also does not establish semantic validity [@manning2008].
+
+The matrix is `r fmt_pct(clusters$geometry$zero_entry_share)` zero. Median cosine distance is `r fmt_num(clusters$geometry$median_distance, 3)`; `r fmt_pct(clusters$geometry$no_shared_term_pair_share)` of pairs share no retained term. Sparse overlap helps explain weak lexical separation.
+
+```{r rq3-representation-sensitivity, echo=FALSE}
+rs <- clusters$representation_sensitivity
+rv <- data.frame(Setting = c("Primary", "Min. 10 tokens", "Min. 20 tokens", "Min. term df 3"),
+  n = rs$n_clustered, Terms = rs$n_terms, Sizes = rs$sizes,
+  Silhouette = rs$mean_silhouette)
+show_table(rv, "Declared post-hoc representation checks using the same average-link selection rule", 4)
+```
+
+All three alternatives address short documents or rare terms; none replaces the primary result. Their low separation strengthens the diagnosis of these lexical representations, without proving that the discussions contain no themes.
 
 ## RQ4: direct-reply structure and the content bridge {.unnumbered .page-break}
 
@@ -398,11 +456,11 @@ The graph combines `r net_value("Matched reply events")` matched events. It excl
 
 ### Whole network and justified subgraph {.unnumbered}
 
-```{r rq4-full-network, echo=FALSE, fig.height=5.0, fig.cap='Full author reply network. Arrows run from replying author to parent author. Seeded positions do not encode semantic similarity.'}
+```{r rq4-full-network, echo=FALSE, fig.height=5.0, fig.cap='Full author reply network. Node size increases with square-root in-degree; orange highlights the two leading reply targets. Arrows point to the parent author; dotted lines guide labels.'}
 plot_network_full(network)
 ```
 
-```{r rq4-largest-component, echo=FALSE, fig.height=5.0, fig.cap='Largest weak component: the largest connected author set when direction is ignored. Labels identify selected high-in-degree authors.'}
+```{r rq4-largest-component, echo=FALSE, fig.height=5.0, fig.cap='Largest weak component. Node sizes use full-network in-degree; labels identify six leading reply targets. Seeded positions do not encode semantic similarity.'}
 plot_network_lcc(network, label_count = 6)
 ```
 
@@ -419,6 +477,8 @@ show_table(centrality_display, "Participants ranked by in-degree, then betweenne
 ```
 
 `r paste(head(network$node_metrics$author, 2), collapse=" and ")` lead in-degree (`r paste(head(network$node_metrics$indegree, 2), collapse=" and ")`). Their betweenness values are `r paste(formatC(head(network$node_metrics$betweenness, 2), digits=4, format="f"), collapse=" and ")`: receiving attention and linking directed paths are different roles. Neither proves expertise, agreement or causal influence. These calculations reproduce the teammate PDF's principal numerical findings; reconstructed code and originals remain separately identified.
+
+Context clarifies prominence. simonw's responsibility claim (43861845) receives `r context_examples$retained_direct_replies[match("43861845", context_examples$comment_id)]` retained direct replies. fishtoaster's proposed verification safeguards (47290195) receive `r context_examples$retained_direct_replies[match("47290195", context_examples$comment_id)]`, while acknowledging they may be insufficient. Reply 47290993 challenges specification-only review; 47292581 gives qualified support with a task-scope condition. These are illustrative readings, not sentiment counts. Their actual parent-child links connect RQ1's contested verification language with network structure and show why RQ2's reply flag measures interaction, not approval.
 
 ### Which content receives replies? {.unnumbered .page-break}
 
@@ -439,11 +499,11 @@ This connects content and interaction without assigning one theme to each author
 
 # Overall findings, limitations and conclusion
 
-Human ownership, independent review and checking practices appear together, but contextual examples contest how responsibility should be allocated. Specific-practice mentions receive retained replies at `r fmt_pct(rq2$rates$reply_rate[2])`, versus `r fmt_pct(rq2$rates$reply_rate[1])` otherwise (difference `r fmt_num(rq2$difference_pp, 2)` percentage points; reference p = `r fmt_num(rq2$test$p.value, 4)`). This provides no basis for claiming that concrete verification language reliably increases attention.
+Across the five selected discussions, examples attach accountability to people while proposed checking work shifts among code review, specifications, test design and automated tools. Replies include challenges and qualified support, not a demonstrated consensus. Specific-practice mentions receive retained replies at `r fmt_pct(rq2$rates$reply_rate[2])`, versus `r fmt_pct(rq2$rates$reply_rate[1])` otherwise (difference `r fmt_num(rq2$difference_pp, 2)` percentage points; reference p = `r fmt_num(rq2$test$p.value, 4)`). The first-comment-per-author contrast changes direction (`r fmt_num(rq2$sensitivity$summary$difference_pp[2], 2)` points). Neither design supports a stable directional or causal conclusion about verification language and attention.
 
 Clustering selects k = `r clusters$selected_k` with sizes `r paste(clusters$cluster_summary$n_comments, collapse="/")` and mean silhouette `r fmt_num(clusters$settings$selected_mean_silhouette, 4)`. `r if (clusters$settings$used_fallback || clusters$settings$selected_mean_silhouette < 0.05) "The partition does not establish distinct, balanced themes, restricting interpretation of cluster reply rates." else "The lexical profiles still require contextual validation."` Meanwhile, the observed network is sparse (density `r fmt_num(net_value("Density"), 4)`), yet `r net_value("Largest weak component")` of `r net_value("Network authors")` authors share its largest weak component. Attention concentrates on particular reply targets, without implying influence or consensus.
 
-The conclusion concerns **expressed responsibility and retained interactions**, not the best practice or code quality. Five selected, uneven threads restrict generalisation; exact search and request logs are unavailable. The uninspected Excel rule, ambiguous labels, quoted language, dependent comments and unequal time to receive replies limit measurement and inference. Sparse vocabulary limits clustering; omitted parents and edge-only author selection constrain the network. Reviewed labels and broader documented sampling should precede stronger claims.
+The conclusion concerns **expressed responsibility and retained interactions**, not the best practice or code quality. Five selected, uneven threads restrict generalisation; exact search and request logs are unavailable. The uninspected Excel rule, ambiguous labels, AI-assisted reading uncertainty, dependent comments and unequal time to receive replies limit measurement and inference. The separate explicit-rule contrast is `r fmt_num(label_sensitivity$summary$difference_pp[2], 2)` points, reinforcing sensitivity to measurement choices. Sparse vocabulary limits clustering; omitted parents and edge-only author selection constrain the network. Reviewed labels and broader documented sampling should precede stronger claims.
 
 # Reproducibility and group contributions
 
@@ -453,7 +513,7 @@ The teammate's RQ2 question, labels and test are preserved; RQ4's principal netw
 
 The repository includes complete functions, data, run instructions and exported tables/figures. Appendix A gives core operations; `outputs/session_info.txt` records the environment. Actual contributions belong in `docs/group_contributions.csv`.
 
-**AI assistance and group evaluation:** AI supported source research, code development and draft review. The group's own critical evaluation, interpretation and understanding remain required. Group members must verify the executed outputs and be able to explain the complete project at the poster discussion; no unperformed human review is claimed.
+**AI assistance and group evaluation:** AI supported source research, code development, draft review 
 
 # Appendix A: core analytical operations {.unnumbered}
 
@@ -478,6 +538,14 @@ cluster::silhouette(groups, as.dist(d))
 g <- igraph::graph_from_data_frame(author_edges, directed = TRUE)
 igraph::degree(g, mode = "in", loops = FALSE)
 igraph::betweenness(g, directed = TRUE, weights = NA, normalized = TRUE)
+```
+
+```{r appendix-sensitivity-core, eval=FALSE}
+first <- order(comments$time, as.numeric(comments$comment_id))
+first <- first[!duplicated(comments$author[first])]
+rq2$joined[first, ]  # retain reply outcomes from the full corpus
+rq2$sensitivity$summary
+label_sensitivity$summary  # separate frozen AI-assisted rule
 ```
 
 # References {-}

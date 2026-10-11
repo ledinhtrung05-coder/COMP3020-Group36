@@ -222,7 +222,7 @@ local function break_header_word(str)
   return out
 end
 
-local function latex_grid(tbl, latex, layout)
+local function latex_grid(tbl, latex, layout, with_caption)
   local width = (layout and layout.inches) or 6.1
   local specs, n = {}, #tbl.colspecs
   for _, spec in ipairs(tbl.colspecs) do
@@ -232,7 +232,11 @@ local function latex_grid(tbl, latex, layout)
       string.format('%.7f', width * spec[2]) .. 'in-2\\tabcolsep-' ..
       string.format('%.7f', (n + 1) / n) .. '\\arrayrulewidth\\relax}'
   end
-  local preamble = '\\begin{longtable}[c]{|' .. table.concat(specs, '|') .. '|}'
+  -- Pandoc 3.8+ suppresses the counter for tables whose caption was removed.
+  -- Set the correct type inside that wrapper before our bottom caption is added.
+  -- Truly captionless tables use the guarded dummy counter in report-style.tex.
+  local preamble = '\\def\\LTcaptype{' .. (with_caption and 'table' or 'none') .. '}\n' ..
+    '\\begin{longtable}[c]{|' .. table.concat(specs, '|') .. '|}'
   local changed
   latex, changed = latex:gsub('\\begin{longtable}%b[]%s*%b{}', function() return preamble end, 1)
   if changed ~= 1 then error('Could not apply the PDF table grid safely.') end
@@ -334,7 +338,7 @@ function Table(tbl)
     -- row transition instead; preceding data rows can still paginate.
     -- Use a plain rule here: longtable hline introduces an internal negative
     -- break penalty, which would defeat the starred row ending.
-    latex = latex_grid(tbl, latex, layout)
+    latex = latex_grid(tbl, latex, layout, true)
     local replaced
     latex, replaced = latex:gsub('\\\\%s*\\hline%s*\\end{longtable}', function()
       return '\\\\* \\noalign{\\nobreak\\hrule height\\arrayrulewidth\\nobreak}\n' .. command .. '\\end{longtable}'

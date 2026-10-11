@@ -1,0 +1,5 @@
+"specification","minimum_tokens","minimum_document_frequency","n_input","n_clustered","n_excluded","n_terms","k","minimum_size","maximum_size","sizes","mean_silhouette","admissible"
+"Primary",5,2,278,264,14,1250,2,2,262,"262/2",0.0150674536209398,FALSE
+"Minimum 10 tokens",10,2,278,227,51,1223,2,1,226,"226/1",0.0156562229971403,FALSE
+"Minimum 20 tokens",20,2,278,167,111,1127,2,2,165,"165/2",0.0184160567155865,FALSE
+"Minimum document frequency 3",5,3,278,264,14,767,2,2,262,"262/2",0.0195588928329016,FALSE

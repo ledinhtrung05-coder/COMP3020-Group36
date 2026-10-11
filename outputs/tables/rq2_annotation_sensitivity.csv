@@ -1,0 +1,5 @@
+"scenario","n","excluded","no_practice_n","no_practice_replies","no_practice_reply_rate","specific_n","specific_replies","specific_reply_rate","difference_pp"
+"Supplied labels: all comments",278,0,155,69,0.445161290322581,123,52,0.422764227642276,-2.23970626803042
+"AI rule: determinate only",273,5,145,63,0.43448275862069,128,57,0.4453125,1.08297413793104
+"AI rule: ambiguous as FALSE",278,0,150,64,0.426666666666667,128,57,0.4453125,1.86458333333333
+"AI rule: ambiguous as TRUE",278,0,145,63,0.43448275862069,133,58,0.43609022556391,0.160746694322011

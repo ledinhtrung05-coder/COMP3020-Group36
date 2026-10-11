@@ -1,0 +1,3 @@
+"analysis","n","authors","no_practice_n","no_practice_replies","no_practice_reply_rate","specific_n","specific_replies","specific_reply_rate","difference_pp","p_value","min_expected"
+"All retained comments",278,186,155,69,0.445161290322581,123,52,0.422764227642276,-2.23970626803042,0.800792700481287,53.5359712230216
+"First retained comment per author",186,186,99,47,0.474747474747475,87,42,0.482758620689655,0.801114594218044,1,41.6290322580645

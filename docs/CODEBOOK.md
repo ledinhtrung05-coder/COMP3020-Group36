@@ -69,3 +69,19 @@ Top terms are lexical descriptors. Read medoid and lowest-silhouette comments; i
 ## Network
 
 A->B means replying author to retained parent-comment author. Collapse duplicate ordered pairs. `frequency` is reply-event count; it is never used as shortest-path distance. In-degree counts distinct incoming authors. Betweenness is directed, unweighted and normalised across the full graph. Include only authors participating in retained between-author edges. Content linkage joins the receiving parent comment's cluster; an author can contribute to multiple clusters.
+
+## Additional AI-assisted sensitivity audit (AI-SENS-v1)
+
+The final methodological revision adds a separate, explicitly documented full-corpus reading. The rule is frozen in `docs/AI_SENS_v1_RULE.md`; row-level decisions are in `data/annotations/verification_audit_AI_SENS_v1.csv`. Each includes an exact source excerpt and a rationale. `R/08_annotation_sensitivity.R` joins by ID, validates excerpts and compares the resulting descriptive rates with the supplied labels. It never overwrites `verification_labels.csv`.
+
+The audit reviewer is an AI assistant. The reading used a masked input view without label/outcome columns. However, prior project context exposed aggregate counts and several labelled examples, so this was not strictly independent blinded validation. Outcomes and all original row labels were joined for comparison only after the audit file was frozen. This is a new operationalisation and sensitivity analysis, not human validation, a gold standard, a reconstruction of the Excel expression, or an inter-rater reliability study. Differences cannot be called confirmed coding errors or an accuracy estimate.
+
+The rule includes explicit code review/testing/checking activities even when quoted, criticised, hypothetical or performed by an agent. Generic verification language without an activity is insufficient. Unresolved referents are AMBIGUOUS; no activity is inherited solely from a parent comment. The primary sensitivity excludes ambiguous cases. Uniform FALSE and uniform TRUE assignments are additional declared scenarios, not mathematical bounds on all possible assignments. No additional significance tests are selected from these views.
+
+### Design sensitivity and contextual evidence
+
+`R/03_hypothesis.R` also selects one earliest retained comment per author by time and numeric ID. Reply outcomes still come from the full clean corpus. This reduces repeated-author weighting but changes the unit to first retained author comments and does not remove shared-thread dependence. All five omitted-thread contrasts are exported descriptively.
+
+`data/context_examples.csv` provides 12 purposively selected readings across the five threads. `R/07_context.R` checks exact excerpts and exports actual child-parent links for the two illustrated reply targets. These examples are separate from the full-corpus AI sensitivity and do not claim representative human coding.
+
+Three additional clustering representations retain the same average-link/k-selection rule: minimum 10 tokens, minimum 20 tokens, and term document frequency at least 3. These post-hoc checks and sparse-matrix geometry diagnose the weak primary partition; they do not select a preferred replacement result. Network figure size and colour now encode computed in-degree, without changing nodes, edges or centrality calculations.

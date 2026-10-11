@@ -1,0 +1,279 @@
+comment_id,assistant_label,evidence,rationale,audit_rule_version,reviewer_type
+43861461,TRUE,they will find “bugs” if you ask them,Asking an LLM to find code bugs is an explicit agent-assisted inspection activity; criticism of false positives still counts.,AI-SENS-v1,AI-assisted full-text review
+43861747,TRUE,carefully review AI-generated code,The retained quotation explicitly describes reviewing generated code and contrasts review with writing.,AI-SENS-v1,AI-assisted full-text review
+43861805,TRUE,write and run a bunch of tests,Explicit proposed execution of generated tests to check conformance to a specification.,AI-SENS-v1,AI-assisted full-text review
+43861845,TRUE,second pair of human eyes look at that PR,A second human reviewing a generated-code pull request is a concrete review activity.,AI-SENS-v1,AI-assisted full-text review
+43861988,FALSE,expect everyone else to catch any issues,Complains about shifting responsibility without identifying how others should detect issues.,AI-SENS-v1,AI-assisted full-text review
+43862062,TRUE,reviewing code is much easier than writing it,Explicitly compares reading/reviewing generated pull requests with writing code.,AI-SENS-v1,AI-assisted full-text review
+43862196,TRUE,asking an LLM to review its own code,The criticised quotation explicitly names LLM self-review; inclusion does not imply endorsement.,AI-SENS-v1,AI-assisted full-text review
+43862197,FALSE,should be told to do better,General criticism of engineers gives no verification activity.,AI-SENS-v1,AI-assisted full-text review
+43862212,FALSE,which is supposed to be autonomous,Identifies an autonomous-agent use case without any checking method.,AI-SENS-v1,AI-assisted full-text review
+43862226,FALSE,responsible software development,Rejects autonomous agents but specifies no review or testing activity.,AI-SENS-v1,AI-assisted full-text review
+43862230,TRUE,unit tests that get regenerated,Sarcastically discusses tests and review of a diff; negation or sarcasm does not remove a textual mention.,AI-SENS-v1,AI-assisted full-text review
+43862272,TRUE,both an AI and a human review the code,"Explicit combined human and AI review, including iterative inspection and tests.",AI-SENS-v1,AI-assisted full-text review
+43862283,FALSE,each file had a single bug in it,"Describes a seeded-bug evaluation task and false-positive outcome, not checking generated code; benchmarking alone is excluded.",AI-SENS-v1,AI-assisted full-text review
+43862311,TRUE,write unit tests,Criticises writing unit tests and proposes specification detail; the explicit test activity counts.,AI-SENS-v1,AI-assisted full-text review
+43862471,FALSE,produce working code that you are confident in,"Long discussion of responsibility, quality and incentives offers no specific checking activity.",AI-SENS-v1,AI-assisted full-text review
+43862532,FALSE,mass-produced code,Discusses craftsmanship and compensation without verification activity.,AI-SENS-v1,AI-assisted full-text review
+43862570,TRUE,unit tests being an example,Names unit testing as engineering work AI could reduce; criticism of the activity still counts.,AI-SENS-v1,AI-assisted full-text review
+43862722,TRUE,bypassed the code review process,Describes human approval/review safeguards for AI-generated pull requests.,AI-SENS-v1,AI-assisted full-text review
+43862796,TRUE,lack of thought or review,Explicitly identifies missing review in copied and AI-generated code; absence of a practice still counts as mention.,AI-SENS-v1,AI-assisted full-text review
+43862875,TRUE,go through a normal reviewer,Proposes normal code review even when authorship is delegated.,AI-SENS-v1,AI-assisted full-text review
+43862914,TRUE,review the tests to make sure they really meet the spec,Names inspection of tests against a specification as a concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+43862926,TRUE,AI code review bot,"Explicitly names automated code review, albeit incidentally within a longer criticism of incentives and interface quality.",AI-SENS-v1,AI-assisted full-text review
+43862939,TRUE,tested that it definitely works,Explicit execution/testing and regression-test coverage are applied to copied and LLM-generated snippets.,AI-SENS-v1,AI-assisted full-text review
+43862940,FALSE,we need new ways to prevent them,Calls for preventing new bugs but does not identify a way to check code.,AI-SENS-v1,AI-assisted full-text review
+43863014,TRUE,use AI to help with reviews,Explicit AI-assisted review with a human signing off the pull request.,AI-SENS-v1,AI-assisted full-text review
+43863052,TRUE,reviewing your own code,Explicit self-review and inspection of what code actually says.,AI-SENS-v1,AI-assisted full-text review
+43863130,TRUE,"test, review, merge",Specifies testing and review as stages required for AI-generated code.,AI-SENS-v1,AI-assisted full-text review
+43863144,FALSE,You're still responsible for that code,Defends copying and tweaking for uniformity without naming a checking activity.,AI-SENS-v1,AI-assisted full-text review
+43863147,TRUE,AI code review tools,Explicitly discusses automated code-review tools and their signal/noise performance.,AI-SENS-v1,AI-assisted full-text review
+43863152,FALSE,how do we ensure that it's,Sarcastic response to a generic quality/safety question includes no concrete activity.,AI-SENS-v1,AI-assisted full-text review
+43863177,FALSE,A good engineer != a good coder.,Distinguishes engineering from coding without a verification method.,AI-SENS-v1,AI-assisted full-text review
+43863222,FALSE,the boundary between inner and outer loop will blur,Discusses workflow boundaries without naming any checking activity in this comment.,AI-SENS-v1,AI-assisted full-text review
+43863401,TRUE,review (or get others to review),Explicitly conditions use of copied code on self-review or another reviewer in the AI-code review discussion.,AI-SENS-v1,AI-assisted full-text review
+43863440,TRUE,a second pair of human eyes,The human second-pair-of-eyes inspection metaphor is explicit in this code-review context.,AI-SENS-v1,AI-assisted full-text review
+43863518,TRUE,an acceptance review from deliverables,Explicitly names an acceptance review of deliverables as the architect activity.,AI-SENS-v1,AI-assisted full-text review
+43863760,TRUE,two sets of eyes,"Proposes two distinct reviewing perspectives, one nonhuman, in the code-review thread.",AI-SENS-v1,AI-assisted full-text review
+43863762,TRUE,review my own code,Describes actual self-review and a separate-reviewer safeguard; a general practice within the review discussion counts.,AI-SENS-v1,AI-assisted full-text review
+43863975,FALSE,why design decisions were made,Questions productivity and junior understanding without a concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+43863986,TRUE,use a property-based testing framework,Explicit property-based generation of inputs for code tests.,AI-SENS-v1,AI-assisted full-text review
+43864088,FALSE,I stand behind every word of it,"Discusses publication, authorship and accountability without an inspection or test activity.",AI-SENS-v1,AI-assisted full-text review
+43864090,TRUE,another engineer should also review the code,"Explicit AI first-pass and human second-pass review, also functional testing.",AI-SENS-v1,AI-assisted full-text review
+43864161,TRUE,Putting aside AI code review,Explicit textual mention of AI code review is included even though the main claim concerns IDE productivity.,AI-SENS-v1,AI-assisted full-text review
+43864164,FALSE,Does that sound appealing to you?,Elliptical opinion question contains no activity; no activity is inherited from its parent.,AI-SENS-v1,AI-assisted full-text review
+43864261,FALSE,the code does one thing and the commit message describes the opposite,"Describes a mismatch and management pressure, but does not explicitly specify a checking procedure.",AI-SENS-v1,AI-assisted full-text review
+43864289,FALSE,cultural pressure from the rest of the team,Questions workplace behaviour and culture without specifying a checking activity.,AI-SENS-v1,AI-assisted full-text review
+43864292,FALSE,Quality control is very important,"Discusses legal-work incentives and accountability, not a concrete check on generated code.",AI-SENS-v1,AI-assisted full-text review
+43864296,FALSE,separate states of being,Distinguishes author states without specifying any checking activity.,AI-SENS-v1,AI-assisted full-text review
+43864337,FALSE,stake their credibility on the quality,Credibility and reputation are discussed without a concrete verification method.,AI-SENS-v1,AI-assisted full-text review
+43864371,FALSE,an good quality answer to a question,"Explains productivity gains through tailored answers, not verification of generated code.",AI-SENS-v1,AI-assisted full-text review
+43864403,FALSE,replace paralegals but won't replace lawyers,Occupational comparison provides no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+43864624,FALSE,you don't understand it,"Requires accountability and understanding, but specifies no concrete checking process.",AI-SENS-v1,AI-assisted full-text review
+43865065,FALSE,LLM output definitely has a reputation,Discusses reputation of generated output without a checking activity.,AI-SENS-v1,AI-assisted full-text review
+43865180,TRUE,using an LLM both to write and review the code,Explicit human review rule and hypothetical LLM code review.,AI-SENS-v1,AI-assisted full-text review
+43865362,FALSE,quickly iterate over beta to make improvements,Iteration and velocity are mentioned without an explicit checking or testing action.,AI-SENS-v1,AI-assisted full-text review
+43865942,FALSE,supervision and maintenance of robots,"General supervision, software assembly and automation, with no specific code verification activity.",AI-SENS-v1,AI-assisted full-text review
+43866255,TRUE,paste it into a logic model like o3 to do the code review,Describes a concrete diff-to-LLM review workflow before human review.,AI-SENS-v1,AI-assisted full-text review
+43866834,FALSE,the merger and approvers are responsible,Allocates responsibility; approval alone does not specify checking activity.,AI-SENS-v1,AI-assisted full-text review
+43866989,TRUE,have the same LLM review the code,"Explicit LLM review and comparison with linters, followed by correctness checking.",AI-SENS-v1,AI-assisted full-text review
+43867002,FALSE,to push back if it thinks the user is wrong,"Prompts an agent to avoid user-pleasing during coding advice, without specifying inspection or testing of generated code.",AI-SENS-v1,AI-assisted full-text review
+43867077,TRUE,doing code reviews,Discusses actual code-review workload and incentives; mention need not be a methodological recommendation.,AI-SENS-v1,AI-assisted full-text review
+43867172,FALSE,That's an interesting typo.,"Comments on a typo, with no generated-code verification action.",AI-SENS-v1,AI-assisted full-text review
+43867335,TRUE,at least one human to see the code before merging it,Explicit fresh-context LLM review and human inspection before merging.,AI-SENS-v1,AI-assisted full-text review
+43867474,FALSE,how they process the outputs,Outsourcing analogy leaves output processing unspecified.,AI-SENS-v1,AI-assisted full-text review
+43867764,TRUE,doing code reviews,Quoted code-review activity and discussion of when reviewers lack sufficient context.,AI-SENS-v1,AI-assisted full-text review
+43868096,FALSE,functional dishonesty,"Discusses model honesty, system prompts and rhetoric, without code-verification activity.",AI-SENS-v1,AI-assisted full-text review
+43868646,TRUE,You review it as if it was another coworker,Explicit human review of an autonomous agent pull request.,AI-SENS-v1,AI-assisted full-text review
+43868785,TRUE,Unit tests aren’t cruft,"Explicitly discusses unit-test construction, harnesses and input/output ranges.",AI-SENS-v1,AI-assisted full-text review
+43868939,TRUE,a review SLO and a round robin auto assigner for reviews,Specifies organisation of code reviews in the code-review thread.,AI-SENS-v1,AI-assisted full-text review
+43869024,TRUE,skip the learning and review steps,Explicit criticism of omitting the review step; absence still counts as a textual mention.,AI-SENS-v1,AI-assisted full-text review
+43869060,TRUE,AI generated unit tests,Names unit testing and the maintenance cost of generated tests.,AI-SENS-v1,AI-assisted full-text review
+43869395,TRUE,I've just reviewed the code personally,Explicit human review of code delegated to an AI developer.,AI-SENS-v1,AI-assisted full-text review
+43869484,TRUE,use Cucumber to check the result,Specifies executable Gherkin/Cucumber checks plus human review of scripts and code.,AI-SENS-v1,AI-assisted full-text review
+43870056,AMBIGUOUS,interrogate the tool,"Describes challenging ChatGPT answers, but the comment does not establish whether the proposal is generated code or general advice.",AI-SENS-v1,AI-assisted full-text review
+43870078,FALSE,take responsibility for their work,Contrasts human outsourcing accountability with AI-assisted work; no checking method.,AI-SENS-v1,AI-assisted full-text review
+43870372,TRUE,reviewing and merging your PR,Explicit refusal to perform code review if it transfers all repair responsibility.,AI-SENS-v1,AI-assisted full-text review
+43872063,FALSE,mitigate with system prompts,"Generic prompting about model opinionation, not checking generated software.",AI-SENS-v1,AI-assisted full-text review
+43872179,FALSE,the reviewer should shads some of the blame,Allocates blame to a role without naming a concrete review action or method.,AI-SENS-v1,AI-assisted full-text review
+43874486,TRUE,AI code review: Should the author be the reviewer?,Retains a quoted code-review question and sarcastic review/testing proposal; endorsement is not required.,AI-SENS-v1,AI-assisted full-text review
+43877003,FALSE,"Not always, but can be",Elliptical response contains no activity and does not inherit one from its parent.,AI-SENS-v1,AI-assisted full-text review
+43877072,FALSE,an enterprise agreement with OpenAI,Contract/data-governance comment specifies no checking activity.,AI-SENS-v1,AI-assisted full-text review
+43877106,TRUE,Test Driven Design,Explicit test-driven design is a named software-checking practice within the AI-code discussion.,AI-SENS-v1,AI-assisted full-text review
+43877121,FALSE,a minor bug or two,"Asks what makes a pull request wasteful, without naming how bugs are checked.",AI-SENS-v1,AI-assisted full-text review
+43878249,TRUE,review (and fix) a PR,Explicit review of generated pull requests and their time cost.,AI-SENS-v1,AI-assisted full-text review
+43882803,TRUE,a first review of the results,Describes first-person review plus a second person inspecting generated code.,AI-SENS-v1,AI-assisted full-text review
+47289611,FALSE,trunk-based development,"Names integration organisation, explicitly distinguished from a build server; no verification activity is stated.",AI-SENS-v1,AI-assisted full-text review
+47289697,FALSE,Code is fully disposable,Predicts disposable versus handcrafted code without a checking action.,AI-SENS-v1,AI-assisted full-text review
+47289753,FALSE,finding out what to build,"Discusses product requirements, prototyping and cleanup, not explicit verification of generated code.",AI-SENS-v1,AI-assisted full-text review
+47289837,FALSE,I spot checked the footnotes and dates,"Concrete checks concern historical claims and sources in a book, not generated software.",AI-SENS-v1,AI-assisted full-text review
+47289908,TRUE,Did I read it all,"Explicit reading of generated code/package code, despite uncertainty about trusting it.",AI-SENS-v1,AI-assisted full-text review
+47289922,TRUE,I spent several hours reviewing it with him,Detailed inspection of generated scripts and tests reveals inadequate assertions and misunderstood requirements.,AI-SENS-v1,AI-assisted full-text review
+47290026,FALSE,quick PoC get cleaned up,Discusses cleanup and production deployment without a specific checking activity.,AI-SENS-v1,AI-assisted full-text review
+47290050,TRUE,"Add tests that are easy for the reviewer to read, test and tweak","Explicit tests and reviewer inspection, supported by smaller documented pull requests.",AI-SENS-v1,AI-assisted full-text review
+47290064,FALSE,verifying that the system is implemented correctly,"Verification effort is stated, but no concrete checking activity or technique is identified.",AI-SENS-v1,AI-assisted full-text review
+47290081,FALSE,looking at the sources that Gemini supplied,"Checks concern a fabricated historical narrative, not AI-generated code.",AI-SENS-v1,AI-assisted full-text review
+47290128,FALSE,fake citations to papers,"Trust and verification concern research citations, not software/code.",AI-SENS-v1,AI-assisted full-text review
+47290138,FALSE,a temporary solution,Aphorism about temporary solutions supplies no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47290150,TRUE,having a look at the code,Explicitly questions whether generated code was inspected; a potentially omitted inspection still counts.,AI-SENS-v1,AI-assisted full-text review
+47290182,FALSE,will have been verified in the wild,"Contrasts established packages with new code, but prior use, issue tracking and maintenance do not specify an intentional checking action.",AI-SENS-v1,AI-assisted full-text review
+47290189,FALSE,can't answer basic questions about the code,"Reports inability and hiring misrepresentation, without an explicit verification procedure in this comment.",AI-SENS-v1,AI-assisted full-text review
+47290195,TRUE,"unit tests, full stack tests, linters, formatters, static analysis",Names several concrete deterministic checks and AI review as candidate ways to verify generated code.,AI-SENS-v1,AI-assisted full-text review
+47290240,TRUE,automate testing for web apps,Explicit automated application testing is proposed to address the new bottleneck.,AI-SENS-v1,AI-assisted full-text review
+47290249,TRUE,"unit tests, full stack tests, linters, formatters, static analysis",The quotation explicitly lists checking methods; the response discusses their absence.,AI-SENS-v1,AI-assisted full-text review
+47290264,FALSE,ironing out every last bug,Predicts regulation and higher standards but does not specify a checking method.,AI-SENS-v1,AI-assisted full-text review
+47290269,FALSE,No more QA,Broad QA role and expert supervision are discussed amid examples of harm; no concrete checking activity is named.,AI-SENS-v1,AI-assisted full-text review
+47290312,FALSE,prompt the AI to verify the software,Specifies who receives a prompt but leaves the verification activity entirely unspecified.,AI-SENS-v1,AI-assisted full-text review
+47290334,FALSE,Will you get rid of him?,Employment question has no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47290336,TRUE,Have I tried sufficient edge cases during QA,"Explicit plan review, trying generated code, edge-case tests and regression coverage.",AI-SENS-v1,AI-assisted full-text review
+47290339,FALSE,write professional research content,"Research access and paraphrasing are discussed, not software verification.",AI-SENS-v1,AI-assisted full-text review
+47290351,FALSE,Why are you teaching a contractor anything?,Questions employment management without a concrete checking method.,AI-SENS-v1,AI-assisted full-text review
+47290361,FALSE,SWEs are the ones running the company,"Discusses who runs a company, with no code-checking action.",AI-SENS-v1,AI-assisted full-text review
+47290374,FALSE,slowing an obviously productive person down,Comment on perceived productivity contains no verification method.,AI-SENS-v1,AI-assisted full-text review
+47290376,TRUE,"unit tests, full stack tests","Quoted checks and own discussion of simulation, emulation, reading code and adversarial models name concrete activities.",AI-SENS-v1,AI-assisted full-text review
+47290387,FALSE,Regulation will follow,"Discusses political influence on regulation, not code verification.",AI-SENS-v1,AI-assisted full-text review
+47290390,FALSE,Bad code isn't Technical Debt,Financial-risk analogy and attribution link supply no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47290403,FALSE,Excellent questions.,Acknowledgement contains no activity and inherits none from the parent.,AI-SENS-v1,AI-assisted full-text review
+47290414,TRUE,for a test suite to cover all observable behavior,Criticises the adequacy of testing generated software; a criticised test method still counts.,AI-SENS-v1,AI-assisted full-text review
+47290423,FALSE,age-gating social media,Regulatory example names no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47290452,FALSE,in regard to your book,Discusses epistemic trust and historical-source verification; the named lecture does not itself specify a generated-code checking action.,AI-SENS-v1,AI-assisted full-text review
+47290461,FALSE,"The word is ""bribing""",Political terminology comment has no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47290464,FALSE,manual work outside of the engineering team,"Proposes organisational dependency to keep prototypes temporary, not code verification.",AI-SENS-v1,AI-assisted full-text review
+47290485,TRUE,without tons of central review,Explicitly describes reducing central review while maintaining software standards; absence/reduction still counts as mention.,AI-SENS-v1,AI-assisted full-text review
+47290511,FALSE,a competent dev understanding a project,Understanding and trust are discussed without a specified checking activity.,AI-SENS-v1,AI-assisted full-text review
+47290535,FALSE,an AI tool to sniff for AI citations,"The checking activity concerns scholarly citations, not generated code.",AI-SENS-v1,AI-assisted full-text review
+47290541,TRUE,"a smaller, simpler code base to review",Explicit review of code/TLA+ specifications and discussion of review workload.,AI-SENS-v1,AI-assisted full-text review
+47290551,FALSE,This is genius.,Evaluation contains no activity and does not inherit one.,AI-SENS-v1,AI-assisted full-text review
+47290566,FALSE,should be included in the spec,"Describes specification completeness, not an action checking implementation against it.",AI-SENS-v1,AI-assisted full-text review
+47290582,FALSE,scared of AI taking his job,Sarcastic management speculation has no checking method.,AI-SENS-v1,AI-assisted full-text review
+47290653,FALSE,I also name everything DEMO__,Uses prototype naming and design artefacts to force replacement; no concrete verification activity is specified.,AI-SENS-v1,AI-assisted full-text review
+47290692,FALSE,I was being hyperbolic,Clarifies rhetorical intent without a checking activity.,AI-SENS-v1,AI-assisted full-text review
+47290745,FALSE,randomly alter 5% of the implementation details,Hypothetical instability example names no verification method.,AI-SENS-v1,AI-assisted full-text review
+47290770,TRUE,simulated user interactions in a staging environment,Specifies agent simulations to expose bugs before production.,AI-SENS-v1,AI-assisted full-text review
+47290926,FALSE,blindly accept what other people tell them,Criticises uncritical acceptance without a concrete code-checking method.,AI-SENS-v1,AI-assisted full-text review
+47290934,TRUE,formal verification,Explicitly contrasts testing selected behaviours with formal verification.,AI-SENS-v1,AI-assisted full-text review
+47290949,FALSE,verification is often much more tractable than discovery,General verification-versus-discovery argument does not specify a concrete check.,AI-SENS-v1,AI-assisted full-text review
+47290993,TRUE,"I want to review the code, not a spec",Explicit preference for inspecting generated code rather than only its specification.,AI-SENS-v1,AI-assisted full-text review
+47291184,FALSE,authorship implies the liability,Discusses liability of authorship with no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47291250,TRUE,LLMs require a test suite,Explicitly names a test suite as needed for producing a working application.,AI-SENS-v1,AI-assisted full-text review
+47291252,TRUE,mandatory reviews by someone uncommitted on the deadline,"Specifies independent review, pre-commit checks and reproducing bugs outside production.",AI-SENS-v1,AI-assisted full-text review
+47291283,FALSE,stop using a tool that doesn't work,Rejects AI adoption without naming a verification activity.,AI-SENS-v1,AI-assisted full-text review
+47291409,FALSE,a return to Waterfall methodology,"Discusses planning rigour, stakeholders and workload rather than a concrete checking procedure.",AI-SENS-v1,AI-assisted full-text review
+47291685,TRUE,not reviewing the code at all,Explicit criticism of omitting review; negated review still counts as mention.,AI-SENS-v1,AI-assisted full-text review
+47291794,FALSE,merge AI code sight unseen,Questions feasibility of unseen merging without naming an actual checking action.,AI-SENS-v1,AI-assisted full-text review
+47291898,FALSE,good moooorning sir,Greeting contains no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47291922,FALSE,AI help with verification,Asks generically about AI verification without a concrete inspection or testing activity.,AI-SENS-v1,AI-assisted full-text review
+47292035,FALSE,pretty precise and concise,"Comments on output verbosity and model concision, not checking code.",AI-SENS-v1,AI-assisted full-text review
+47292072,FALSE,Why hasn't SWE then not been completely outsourced,Questions outsourcing analogy without naming a verification activity.,AI-SENS-v1,AI-assisted full-text review
+47292074,TRUE,"simulating them, running each step and finding out",Explicit simulation/execution is contrasted with a supposedly complete specification in software/hardware systems.,AI-SENS-v1,AI-assisted full-text review
+47292315,FALSE,"strict anti-flood mechanisms, brute-force protection","Describes security controls and architectural responsibility, not an action checking generated code.",AI-SENS-v1,AI-assisted full-text review
+47292368,TRUE,without human review of raw code,Explicitly discusses the possible absence of human code review; a negated mention still counts.,AI-SENS-v1,AI-assisted full-text review
+47292553,TRUE,a long list of input->output pairs,Specifies reviewable input/output test cases and discusses missing coverage.,AI-SENS-v1,AI-assisted full-text review
+47292573,TRUE,a program that satisfies all the tests,Discusses inconsistency and inadequacy of test cases as correctness checks.,AI-SENS-v1,AI-assisted full-text review
+47292581,FALSE,deciding what types of code can be reliably handed off to AI,Task selection and reliability targets are discussed without a verification action.,AI-SENS-v1,AI-assisted full-text review
+47292583,FALSE,redefinition of the term mistake,Terminology question has no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47292624,FALSE,Changing the language does not seem to change the FAQ,Reports a website localisation issue; the comment does not connect this troubleshooting to checking AI-generated code.,AI-SENS-v1,AI-assisted full-text review
+47292679,FALSE,asking how that is supposed to scale,"Questions scalability/security/extensibility in general, without a concrete inspection or testing method.",AI-SENS-v1,AI-assisted full-text review
+47292753,TRUE,without human review of raw code,"The quotation explicitly names human code review, while the response contests resulting quality.",AI-SENS-v1,AI-assisted full-text review
+47292836,TRUE,worked on my local machine as expected and performed well,Describes previous code review and local behavioural/performance checks now being curtailed.,AI-SENS-v1,AI-assisted full-text review
+47292915,TRUE,make another human review the code you made with AI,Explicitly discusses who should review generated code and bear responsibility.,AI-SENS-v1,AI-assisted full-text review
+47292925,FALSE,refresh the page and test it,Requests website troubleshooting without identifying generated-code verification in this comment.,AI-SENS-v1,AI-assisted full-text review
+47293190,FALSE,"vibe law, vibe medicine, vibe legislation",Predictions about other domains name no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47293564,FALSE,what the purpose of the system is,"Discusses responsibility for system intent, not verification.",AI-SENS-v1,AI-assisted full-text review
+47293593,FALSE,Neural nets sucked in 1960s,Historical technology analogy contains no checking method.,AI-SENS-v1,AI-assisted full-text review
+47293609,TRUE,testing a game where the inputs are the possible states,"Concrete test inputs, expected states and review of changed cases are discussed.",AI-SENS-v1,AI-assisted full-text review
+47293617,TRUE,coming up with enough sample test cases,Explicit input/output tests are contrasted with implementation and model fitting.,AI-SENS-v1,AI-assisted full-text review
+47293703,FALSE,the Concorde did not replace normal jet travel,Transport analogy has no software-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47293884,FALSE,research from as many primary sources as you can,Concrete source checking concerns research/books rather than generated software.,AI-SENS-v1,AI-assisted full-text review
+47294934,TRUE,Set it in stone with TLA+,"Proposes observing desired system behaviour and formalising it with TLA+, while criticising the proposal.",AI-SENS-v1,AI-assisted full-text review
+47295529,FALSE,leaving crucial decisions and understanding to LLMs,Concern about human understanding and decisions supplies no concrete check.,AI-SENS-v1,AI-assisted full-text review
+47295807,FALSE,Prototypes have a bad habit of becoming the product,Prototype lifecycle observation contains no verification method.,AI-SENS-v1,AI-assisted full-text review
+47295812,FALSE,Can you give an example?,Request for an example contains no activity and inherits none.,AI-SENS-v1,AI-assisted full-text review
+47295857,TRUE,you witnessed the tests fail before making them pass,Explicit test-driven development with witnessed failing and passing tests.,AI-SENS-v1,AI-assisted full-text review
+47296419,FALSE,the EU will regulate,Regulatory prediction contains no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47297582,TRUE,without human review of raw code,"Quoted discussion explicitly mentions human review, even though the response mainly questions feasibility claims.",AI-SENS-v1,AI-assisted full-text review
+47297601,FALSE,"structured checks to catch the ""easy"" problems","Describes automation stages and escalation, but the checks themselves are unspecified; generic checks do not meet this rule.",AI-SENS-v1,AI-assisted full-text review
+47298214,FALSE,two orders of magnitude cheaper,Cost comparison contains no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47298568,TRUE,doing QA review,Explicit QA review of a client-generated application is discussed as costly work.,AI-SENS-v1,AI-assisted full-text review
+47299252,FALSE,offshore was and still is cheaper,Cost/history comment has no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47300292,FALSE,human oversight of the spec,"General oversight is endorsed, but no concrete review, comparison or test activity is stated.",AI-SENS-v1,AI-assisted full-text review
+47309375,TRUE,"tests, linters, CI",Explicit deterministic code checks are contrasted with immutable execution-audit evidence.,AI-SENS-v1,AI-assisted full-text review
+47388846,TRUE,each code diff also includes an architecture diff,Specifies reviewing code and architectural changes at different abstraction levels.,AI-SENS-v1,AI-assisted full-text review
+47415652,TRUE,"mutation testing, property testing, and fuzzing",Explicitly names three verification/testing techniques and their computational costs.,AI-SENS-v1,AI-assisted full-text review
+47415756,TRUE,skip code reviews,Explicitly argues against omitting review of generated code.,AI-SENS-v1,AI-assisted full-text review
+47415865,TRUE,review of the testing code,Names both mutation testing and review of test code.,AI-SENS-v1,AI-assisted full-text review
+47416001,FALSE,easy to verify,"Criticises trivial examples and asks quality questions, but does not name a concrete checking action.",AI-SENS-v1,AI-assisted full-text review
+47416059,FALSE,scale beyond trivial programs,Questions scalability without naming a verification activity.,AI-SENS-v1,AI-assisted full-text review
+47416156,TRUE,testing for/against them,"Explicit tests against system abstractions/failure modes, with responsibility for the testing approach.",AI-SENS-v1,AI-assisted full-text review
+47416199,TRUE,architecture and testing now,"Explicitly locates engineering work in testing, alongside architectural design.",AI-SENS-v1,AI-assisted full-text review
+47416203,AMBIGUOUS,For visual results the benchmark is often 'does it look right?',"Visual inspection is suggested, but it is unclear whether these results are software behaviour/interfaces or non-code generated visuals.",AI-SENS-v1,AI-assisted full-text review
+47416251,TRUE,backed by a decent test suite,Sarcastically proposes tests and performance benchmarks for generated implementations; mention does not imply endorsement.,AI-SENS-v1,AI-assisted full-text review
+47416268,TRUE,Mutation is a test for the test suite,Explains mutation testing and coverage of specified program behaviour.,AI-SENS-v1,AI-assisted full-text review
+47416357,FALSE,...in FizzBuzz,Names an example program but no checking action.,AI-SENS-v1,AI-assisted full-text review
+47416373,FALSE,code doesn't matter,Contrasts code and product perspectives without a verification method.,AI-SENS-v1,AI-assisted full-text review
+47416385,FALSE,nobody even knows the full requirements,Criticises wholesale replacement of production code; no concrete checking activity is stated.,AI-SENS-v1,AI-assisted full-text review
+47416403,TRUE,"unit tests, functional tests, or mutants",Explicitly distinguishes test methods from mathematical verification and automated test generation.,AI-SENS-v1,AI-assisted full-text review
+47416423,TRUE,reading any of the code their LLMs are dumping out,Explicitly questions whether users read generated code; a sarcastic mention still counts.,AI-SENS-v1,AI-assisted full-text review
+47416481,FALSE,using a formal specification language,Proposes writing exhaustive requirements to eliminate coding; no check of generated implementation is stated.,AI-SENS-v1,AI-assisted full-text review
+47416503,TRUE,The code must pass property-based tests,"Explicit property-based tests and compiler test suites are discussed, including their limitations.",AI-SENS-v1,AI-assisted full-text review
+47416512,FALSE,need to be very careful about what we release,Caution about compatibility and defect permanence gives no concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+47416663,FALSE,approach provable code,Calls for a provability property but does not specify proof construction or any checking action.,AI-SENS-v1,AI-assisted full-text review
+47416664,FALSE,the code _is_ the specification,Observation about brownfield specifications does not name a verification action.,AI-SENS-v1,AI-assisted full-text review
+47416748,FALSE,"production ready ""fizz buzz"" code",Dismisses a trivial example without a checking method.,AI-SENS-v1,AI-assisted full-text review
+47416755,TRUE,shipping LLM generated code without review,Explicitly contrasts the risk of omitting review with potential speed/cost gains.,AI-SENS-v1,AI-assisted full-text review
+47416773,FALSE,rewrite their code to work around your change,"Proposes rewriting dependent code, not a checking activity.",AI-SENS-v1,AI-assisted full-text review
+47416783,FALSE,human written code going into production without LLM review,"The specified review applies explicitly to human-written code, not generated code; the narrower referent overrides the thread context.",AI-SENS-v1,AI-assisted full-text review
+47416907,FALSE,"after it broke, which costs money",Comment on failure costs gives no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47416936,FALSE,retrain 5000 people on the new process,"Discusses organisational change costs and user migration, not checking generated code.",AI-SENS-v1,AI-assisted full-text review
+47417137,FALSE,marketplace of AI-written applications,Suggests distribution infrastructure without a verification method.,AI-SENS-v1,AI-assisted full-text review
+47417189,TRUE,Generating correct tests,Explicitly discusses test generation and the test-oracle problem.,AI-SENS-v1,AI-assisted full-text review
+47417496,TRUE,Running code we can examine,Explicitly advocates inspectable/runnable generated code as a way to retain legibility.,AI-SENS-v1,AI-assisted full-text review
+47417563,FALSE,the commenter is being sarcastic,Clarifies another comment tone without a checking activity.,AI-SENS-v1,AI-assisted full-text review
+47417565,FALSE,They will never need to write code again,Discusses beliefs about coding and employment; no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47417593,TRUE,LLM-generated test code,"Criticises generated tests and attempts to force them to pass, then advocates detailed planning.",AI-SENS-v1,AI-assisted full-text review
+47417792,TRUE,even property tests aren’t going to cover you sufficiently,Explicitly discusses tests for temporal/system properties and the danger of unread code.,AI-SENS-v1,AI-assisted full-text review
+47417797,FALSE,Click the button,Humorous prediction about future code generation has no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47417826,FALSE,hard to tell online,"Comments on interpreting online sarcasm and software generation, not checking code.",AI-SENS-v1,AI-assisted full-text review
+47417875,FALSE,"Whatever you ship, steve will eat",Metaphor about downstream dependence contains no concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+47417879,FALSE,I can't think of a proper way to solve that,Identifies side effects as a problem but supplies no checking method.,AI-SENS-v1,AI-assisted full-text review
+47418009,FALSE,care about code correctness,States correctness and stakeholder-alignment goals without a concrete check.,AI-SENS-v1,AI-assisted full-text review
+47418013,FALSE,care how is built,Manufacturing-quality analogy names no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47418127,TRUE,"reviewing itself, and testing",Explicit agent self-review/testing plus occasional human inspection in an AI-built application.,AI-SENS-v1,AI-assisted full-text review
+47418156,FALSE,only generated from a spec,Discusses specification-driven generation and scale without checking implementation.,AI-SENS-v1,AI-assisted full-text review
+47418159,FALSE,fix every company's JIRA implementation,Predicts maintenance work without a specific verification method.,AI-SENS-v1,AI-assisted full-text review
+47418187,FALSE,the industry is in full psychosis,Opinion contains no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47418193,FALSE,requirements on what the car can and cannot do,Manufacturing analogy discusses requirements but not testing or inspection.,AI-SENS-v1,AI-assisted full-text review
+47418270,FALSE,Let's ask an LLM about it,"Requests a general language capability, not verification of generated code.",AI-SENS-v1,AI-assisted full-text review
+47418436,FALSE,Ask AI about a strategy and tools,Unspecified strategy/tools request identifies no actual checking activity.,AI-SENS-v1,AI-assisted full-text review
+47418536,FALSE,You still need to do the strategy,Contrasts planning and implementation without a verification method.,AI-SENS-v1,AI-assisted full-text review
+47418625,TRUE,static analysis tools / linters / testers,"Explicit review, linting, pre-commit checks and testing as controls for AI-produced code.",AI-SENS-v1,AI-assisted full-text review
+47418636,TRUE,poking through public repos built with AI tools,Describes inspection for exposed secrets and criticises tests that miss these issues.,AI-SENS-v1,AI-assisted full-text review
+47418647,AMBIGUOUS,review junior developers' code,"An explicit review activity is named, but the comment alone does not resolve whether junior code is an analogy for AI or solely human-written code.",AI-SENS-v1,AI-assisted full-text review
+47418662,TRUE,write enough tests to verify AI code,Explicit tests are framed as an executable specification for generated code.,AI-SENS-v1,AI-assisted full-text review
+47418665,TRUE,"run the code they are generating, let alone read it",Explicitly names omitted execution/reading and the reviewer testing workload.,AI-SENS-v1,AI-assisted full-text review
+47418695,FALSE,an even bigger dumpster fire,Negative prediction contains no concrete checking method.,AI-SENS-v1,AI-assisted full-text review
+47418725,TRUE,TEST/PROVE/VERIFY characteristics of the language,"Describes generated examples using strong types, contracts, testing and proving facilities.",AI-SENS-v1,AI-assisted full-text review
+47418829,TRUE,automated testing / linting,Explicit automated tests and linting are recommended around AI code.,AI-SENS-v1,AI-assisted full-text review
+47419051,FALSE,Can't be more expensive than GenAI itself,Cost question contains no activity and does not inherit one.,AI-SENS-v1,AI-assisted full-text review
+47419075,TRUE,carefully review the tests and not the code,Explicitly advocates inspection of tests produced by an LLM.,AI-SENS-v1,AI-assisted full-text review
+47419079,TRUE,scan the code or simply run it and use it,Explicit scanning and execution are used to notice defects in generated applications.,AI-SENS-v1,AI-assisted full-text review
+47419135,TRUE,review effort becomes more than the coding itself,Discusses the cost of explicit review work within the generated-code discussion.,AI-SENS-v1,AI-assisted full-text review
+47419159,FALSE,If that would work reliably,Elliptical reliability argument names no checking action and inherits none.,AI-SENS-v1,AI-assisted full-text review
+47419210,TRUE,code reviews of AI generated code,Explicitly asks whether the other person opposes review of generated code.,AI-SENS-v1,AI-assisted full-text review
+47419533,FALSE,how it's built directly impacts what it can and cannot do,Manufacturing analogy connects process and requirements but names no verification action.,AI-SENS-v1,AI-assisted full-text review
+47419699,FALSE,Replace them by AI,Sarcastic suggestion about replacing workers has no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47420050,TRUE,carefully verify that the spline pass by those points,"Concrete input/output test analogy and test assertions are discussed, with limits on what they establish.",AI-SENS-v1,AI-assisted full-text review
+47420079,TRUE,writing tests,Explicitly names test writing as a tedious software-development activity.,AI-SENS-v1,AI-assisted full-text review
+47420106,FALSE,compare it to similar things in this space,Requests a comparison between tools/languages without specifying code verification.,AI-SENS-v1,AI-assisted full-text review
+47420125,TRUE,designing and validating the tests based on his knowledge,Specifies checking tests against project goals.,AI-SENS-v1,AI-assisted full-text review
+47420136,TRUE,there must be a human review step,Explicitly requires human review and contrasts it with merely passing generated test suites.,AI-SENS-v1,AI-assisted full-text review
+47420162,TRUE,demo to me the feature working,"Proposes demonstrating running behaviour, alongside smaller pull requests, to check submitted work.",AI-SENS-v1,AI-assisted full-text review
+47420246,TRUE,you'll never test them all in polynomial time,Explicitly discusses exhaustive testing of state combinations and its limits.,AI-SENS-v1,AI-assisted full-text review
+47420436,TRUE,output report from running them,"Specifies separated test-writing and implementation agents, access controls and executed test reports.",AI-SENS-v1,AI-assisted full-text review
+47420707,FALSE,features that help in writing probably working code,Language comparison states design intentions but no concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+47420723,TRUE,identify edge cases and points that need to be tested first,Proposes AI-assisted test-case/edge-case identification from a specification.,AI-SENS-v1,AI-assisted full-text review
+47420776,TRUE,selecting a few candidates to run the code through,Explicit representative input tests are distinguished from proving general correctness.,AI-SENS-v1,AI-assisted full-text review
+47421275,TRUE,time implementing & reviewing,"Explicit reviewing and discussion of test gates, intent and coding standards.",AI-SENS-v1,AI-assisted full-text review
+47422072,FALSE,what vs how,Business/engineering distinction has no checking activity.,AI-SENS-v1,AI-assisted full-text review
+47422089,FALSE,I like this analogy,Acknowledgement contains no activity and inherits none.,AI-SENS-v1,AI-assisted full-text review
+47422108,FALSE,spec and code are entirely redundant,Discusses specification detail and reuse without a concrete check.,AI-SENS-v1,AI-assisted full-text review
+47422218,FALSE,Have you tried Claude 4.6 Opus?,Suggests a model without stating the activity being proposed.,AI-SENS-v1,AI-assisted full-text review
+47422263,FALSE,they could be held accountable,Accountability statement names no verification activity.,AI-SENS-v1,AI-assisted full-text review
+47422523,FALSE,Branding is a thing,Marketing analogy contains no code-checking activity.,AI-SENS-v1,AI-assisted full-text review
+47427867,TRUE,Regression tests,Explicitly recommends regression testing rather than trying to anticipate every bug.,AI-SENS-v1,AI-assisted full-text review
+47440019,FALSE,Humans will still be held accountable,Discusses organisational and individual accountability without a checking method.,AI-SENS-v1,AI-assisted full-text review
+49326680,TRUE,I rarely do code reviews anymore,Explicit statement that code review is rarely performed; absence/reduction still counts as mention.,AI-SENS-v1,AI-assisted full-text review
+49326866,TRUE,going line by line,"Explicit line-by-line review, automated review lenses and static analysis.",AI-SENS-v1,AI-assisted full-text review
+49328161,TRUE,do the human side of the review based on the feedback,Describes LLM inspection followed by human review of a pull request.,AI-SENS-v1,AI-assisted full-text review
+49330409,TRUE,run a gauntlet of judges against the PR,Explicit multi-judge review of a pull request with assigned checking scopes.,AI-SENS-v1,AI-assisted full-text review
+49335907,TRUE,a new interface we are exploring for code review,Explicitly proposes an interface for reviewing pull requests.,AI-SENS-v1,AI-assisted full-text review
+49340321,TRUE,"review the decision trace: plan, assumptions",Explicit LLM review and inspection of the reasoning/decision trace.,AI-SENS-v1,AI-assisted full-text review
+49351024,TRUE,add corresponding tests to prevent regressions,Explicit repeated checks and regression tests.,AI-SENS-v1,AI-assisted full-text review
+49353756,TRUE,a custom architecture reviewer that just runs Claude,Specifies agent architecture/code reviewers and comparison of the defects they catch.,AI-SENS-v1,AI-assisted full-text review
+49378474,FALSE,validate your code,Calls for thorough validation but specifies no concrete checking activity.,AI-SENS-v1,AI-assisted full-text review
+49378613,TRUE,test coverage reports help improve tests,"Explicit review, coverage reports, separate test writing and iterative agent review of a pull request.",AI-SENS-v1,AI-assisted full-text review
+49388308,AMBIGUOUS,I use pyor.review,Only a tool/domain name is supplied; its actual activity cannot be established from the comment and title without external assumptions.,AI-SENS-v1,AI-assisted full-text review
+49391935,TRUE,unit tests and integration tests,"Specifies test gates, diagnostic logging and red-before/green-after regression checks.",AI-SENS-v1,AI-assisted full-text review
+49431613,TRUE,navigate the diff and guide the reviewer,Describes inspection guided by extracted AI decisions and architectural review.,AI-SENS-v1,AI-assisted full-text review
+49431682,TRUE,review the decision trace,Explicitly endorses reviewing the decision trace rather than only the diff.,AI-SENS-v1,AI-assisted full-text review
+49438416,AMBIGUOUS,use https://pyor.review instead of github,"Mentions a replacement tool and unspecified pain points, but no checking activity is described within the comment.",AI-SENS-v1,AI-assisted full-text review

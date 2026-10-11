@@ -238,35 +238,113 @@ analyse_network <- function(comments, seed = 3020L) {
   ), class = c("hn_reply_network", "list"))
 }
 
-.nw_plot_graph <- function(graph, layout, main, labels = NULL) {
+.nw_plot_labels <- function(coordinates, labels, colour, node_radii,
+                            compact = FALSE) {
+  # Place only the selected labels. Candidate positions are scored against the
+  # node coordinates and earlier labels, so a fixed layout yields fixed labels.
+  # White label backgrounds preserve readability where many reply edges cross.
+  labelled <- which(!is.na(labels) & nzchar(labels))
+  boxes <- list()
+  cex <- if (compact) 0.73 else 0.76
+  offsets <- as.matrix(expand.grid(dx = c(-1, 0, 1), dy = c(-1, 0, 1)))
+  offsets <- offsets[rowSums(abs(offsets)) > 0, , drop = FALSE]
+  for (i in labelled) {
+    w <- graphics::strwidth(labels[i], cex = cex) + 0.035
+    h <- graphics::strheight(labels[i], cex = cex) + 0.020
+    candidates <- do.call(rbind, lapply(c(0.04, 0.11, 0.20), function(gap) {
+      cbind(coordinates[i, 1] + offsets[, 1] * (w / 2 + gap),
+            coordinates[i, 2] + offsets[, 2] * (h / 2 + gap))
+    }))
+    score <- apply(candidates, 1, function(at) {
+      box <- c(at[1] - w / 2, at[1] + w / 2,
+               at[2] - h / 2, at[2] + h / 2)
+      outside <- box[1] < -1.18 || box[2] > 1.18 ||
+        box[3] < -1.10 || box[4] > 1.10
+      nodes <- sum(coordinates[, 1] >= box[1] - 0.025 &
+        coordinates[, 1] <= box[2] + 0.025 &
+        coordinates[, 2] >= box[3] - 0.025 &
+        coordinates[, 2] <= box[4] + 0.025)
+      overlaps <- if (length(boxes)) sum(vapply(boxes, function(other) {
+        box[1] < other[2] + 0.02 && box[2] > other[1] - 0.02 &&
+          box[3] < other[4] + 0.02 && box[4] > other[3] - 0.02
+      }, logical(1))) else 0L
+      1000 * outside + 100 * overlaps + 10 * nodes +
+        sqrt(sum((at - coordinates[i, ])^2))
+    })
+    at <- candidates[which.min(score), ]
+    box <- c(at[1] - w / 2, at[1] + w / 2,
+             at[2] - h / 2, at[2] + h / 2)
+    direction <- at - coordinates[i, ]
+    guide_start <- coordinates[i, ] + direction / sqrt(sum(direction^2)) *
+      node_radii[i] * 1.1
+    graphics::segments(guide_start[1], guide_start[2], at[1], at[2],
+                       col = "#82929B", lwd = 0.6, lty = 3)
+    graphics::rect(box[1], box[3], box[2], box[4], col = "#FFFFFFF2", border = NA)
+    graphics::text(at[1], at[2], labels[i], cex = cex, col = colour[i], font = 2)
+    boxes[[length(boxes) + 1L]] <- box
+  }
+  invisible(boxes)
+}
+
+.nw_plot_graph <- function(graph, layout, main, node_metrics, labels = NULL,
+                           leaders = character(), compact = FALSE) {
   if (!igraph::vcount(graph)) {
     graphics::plot.new()
     graphics::title(main = main)
     graphics::text(0.5, 0.5, "No between-author replies in this subset.")
     return(invisible(NULL))
   }
-  old_par <- graphics::par(mar = c(1.2, 1, 3.2, 1))
+  old_par <- graphics::par(mar = c(3.4, 0.25, if (nzchar(main)) 2.7 else 0.3, 0.25))
   on.exit(graphics::par(old_par), add = TRUE)
   if (is.null(labels)) labels <- rep(NA_character_, igraph::vcount(graph))
-  plot(graph, layout = layout, main = main,
-       vertex.size = 4.2, vertex.color = "#287C8E", vertex.frame.color = "#FFFFFF",
-       vertex.label = labels, vertex.label.cex = 0.72,
-       vertex.label.color = "#173442", vertex.label.dist = 0.7,
-       edge.color = "#73838E88", edge.width = 0.7,
-       edge.arrow.size = 0.24, edge.arrow.width = 0.6,
-       edge.curved = 0.08, margin = 0.15)
-  graphics::mtext("Arrow: replying author -> parent author; nodes have equal size.",
-                  side = 1, line = 0.15, cex = 0.7, col = "#465462")
+  names <- igraph::vertex_attr(graph, "name")
+  # Use the original full graph's degree in both views: removing other components
+  # must never silently redefine the displayed metric or its size scale.
+  degree <- node_metrics$indegree[match(names, node_metrics$author)]
+  if (anyNA(degree)) stop("Network plot is missing full-graph node metrics.")
+  colours <- ifelse(names %in% leaders, "#C35A2E", "#287C8E")
+  sizes <- 3 + 2 * sqrt(degree)
+  coordinates <- if (nrow(layout) > 1L) {
+    igraph::norm_coords(layout, xmin = -1, xmax = 1, ymin = -1, ymax = 1)
+  } else matrix(c(0, 0), nrow = 1L)
+  plot(graph, layout = coordinates, rescale = FALSE, main = main,
+       xlim = c(-1.20, 1.20), ylim = c(-1.12, 1.12), asp = 0,
+       vertex.size = sizes, vertex.color = colours, vertex.frame.color = "#FFFFFF",
+       vertex.label = NA, edge.color = "#73838E80", edge.width = 0.7,
+       edge.arrow.size = if (compact) 0.25 else 0.24, edge.arrow.width = 0.6,
+       edge.curved = 0.08, margin = 0)
+  label_text <- ifelse(is.na(labels), NA_character_, paste0(labels, " (", degree, ")"))
+  .nw_plot_labels(coordinates, label_text, colours, sizes / 200, compact)
+  limits <- graphics::par("usr")
+  line_height <- graphics::par("csi") * graphics::par("mex") /
+    graphics::par("pin")[2] * diff(limits[3:4])
+  graphics::legend(mean(limits[1:2]), limits[3] - 0.05 * line_height,
+    xjust = 0.5, yjust = 1, xpd = NA, horiz = TRUE,
+    legend = c("Top two by in-degree", "Other authors"),
+    pch = 21, pt.bg = c("#C35A2E", "#287C8E"), col = "#FFFFFF",
+    pt.cex = 1.25, bty = "n", cex = if (compact) 0.66 else 0.72)
+  graphics::mtext("Size increases with in-degree; label numbers = distinct replying authors.",
+                  side = 1, line = 1.55, cex = if (compact) 0.57 else 0.64,
+                  col = "#465462")
+  graphics::mtext("Arrow: replying author -> parent author. Dotted lines guide labels only.",
+                  side = 1, line = 2.30, cex = if (compact) 0.57 else 0.64,
+                  col = "#465462")
   invisible(layout)
 }
 
-plot_network_full <- function(network, main = NULL) {
+plot_network_full <- function(network, main = NULL, compact = FALSE) {
   .nw_require_igraph()
   if (is.null(main)) {
     main <- sprintf("Full reply network: %s authors, %s directed pairs",
                     igraph::vcount(network$graph), igraph::ecount(network$graph))
   }
-  .nw_plot_graph(network$graph, network$layout_full, main)
+  ranked <- network$node_metrics[order(-network$node_metrics$indegree,
+    -network$node_metrics$betweenness, network$node_metrics$author, method = "radix"), ]
+  leaders <- utils::head(ranked$author, 2L)
+  names <- igraph::vertex_attr(network$graph, "name")
+  labels <- ifelse(names %in% leaders, names, NA_character_)
+  .nw_plot_graph(network$graph, network$layout_full, main, network$node_metrics,
+                 labels, leaders, compact)
 }
 
 plot_network_lcc <- function(network, label_count = 6L, main = NULL) {
@@ -279,9 +357,10 @@ plot_network_lcc <- function(network, label_count = 6L, main = NULL) {
   if (is.null(main)) {
     main <- sprintf("Largest weak component: %s authors", igraph::vcount(graph))
   }
-  # Label selection uses full-network indegree, then full-network betweenness.
-  # Uniform node size avoids suggesting an author has one unique content cluster.
-  .nw_plot_graph(graph, network$layout_lcc, main, labels)
+  # Labels and orange highlights use the same full-graph ranking as the full view.
+  # Colour denotes rank only; it never assigns an author a comment-content cluster.
+  leaders <- utils::head(network$node_metrics$author, 2L)
+  .nw_plot_graph(graph, network$layout_lcc, main, network$node_metrics, labels, leaders)
 }
 
 plot_indegree_distribution <- function(network) {

@@ -32,7 +32,7 @@ Hacker News provides text and parent/child relationships through its documented 
 | `collection/01_collect_new_snapshot.R` | Separate, optional entry point for a new logged download. It is not evidence of the September execution. | EDIT 1: thread IDs. EDIT 2: a new output folder. EDIT 3: set `run_collection` to TRUE only if deliberately recollecting. No download is needed to reproduce this report. |
 | `R/01_collect_hn.R` | Implementation called by the optional entry point. Logs new API requests. | No routine edit is required. Logs produced now must never be described as September logs. |
 | `data/collection_manifest.csv` | Collection date, script path, limitations and per-thread rationale for the analysed snapshot. | The confirmed date and rationale are already filled. Update `original_collection_R_script` only if the actual historical source differs; update date fields only from real records. Do not fill unknown UTC time with midnight. |
-| `docs/group_contributions.csv` | Shared cover and poster member details. | Fill names, IDs, actual contributions and percentages yourself, as agreed. |
+| `docs/group_contributions.csv` | Shared cover and poster member details. | Names/SIDs are copied from your GitHub report. Verify them and enter actual contributions and percentages yourself, as agreed. |
 
 If your actual September collector differs from the recovered script, save the exact original as `collection/01_collect_hn_actual_20260928.R` and set `original_collection_R_script` to that path for the relevant rows. This is a suggested future filename, not a file claimed to exist in this package. Keep the recovered archive intact. Do not change raw/clean CSVs merely to tidy the collection documentation.
 
@@ -62,4 +62,8 @@ If a documented review later changes labels, version the original data, record t
 
 ## Final local handoff
 
-Fill member details, review the report's disclosed limitations, run `source("check_project.R")`, and knit both Rmd files. After actual group review, set `group_review_confirmed: true` and `final_mode: true` in **both** report and poster. These flags record a review decision; they do not turn unknown historical details into known facts. Inspect the complete report for the 30-page limit and the poster for one-page layout, then upload the matching PDFs and repository files.
+Verify the populated names/SIDs, enter actual roles and contribution percentages totalling 100, review the report's disclosed limitations, and run `source("check_project.R")`. After actual group review, set `group_review_confirmed: true` and `final_mode: true` in **both** report and poster, then knit both Rmd files. These flags record a review decision; they do not turn unknown historical details into known facts. Inspect the complete report for the 30-page limit and the poster for one-page layout, then upload the matching PDFs and repository files.
+
+## Subsequent methodological improvement
+
+A new, separate `verification_audit_AI_SENS_v1.csv` supplies an AI-assisted full-text sensitivity reading under the frozen rule in `docs/AI_SENS_v1_RULE.md`. It preserves the original 123/155 labels and does not recover the original Excel expression. R exports the comparison, exclusions, rate scenarios, exact evidence and rationales. The group can inspect the new decisions before its actual review confirmation. No human-validation or reliability claim is made.
